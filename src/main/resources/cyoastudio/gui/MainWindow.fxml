@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
+
+<fx:root prefHeight="600.0" prefWidth="800.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Project">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#newProject" text="New" />
+                  <MenuItem mnemonicParsing="false" onAction="#openProject" text="Open">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#saveProject" text="Save">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#saveProjectAs" text="Save as">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <Menu mnemonicParsing="false" text="Export...">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#exportImage" text="Image" />
+                    </items>
+                  </Menu>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#exitProgram" text="Exit">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Debug">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#setStyle" text="Set style" />
+              </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" rotateGraphic="true" side="LEFT" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab closable="false" text="Content">
+            <content>
+                  <BorderPane fx:id="contentPane">
+                     <left>
+                        <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                          <items>
+                              <VBox>
+                                 <children>
+                                    <ListView fx:id="sectionList" editable="true" fixedCellSize="24.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                       <contextMenu>
+                                          <ContextMenu>
+                                             <items>
+                                                <MenuItem mnemonicParsing="false" onAction="#newSection" text="New section" />
+                                                <MenuItem mnemonicParsing="false" onAction="#deleteSection" text="Delete section" />
+                                             </items>
+                                          </ContextMenu>
+                                       </contextMenu>
+                                    </ListView>
+                                    <HBox prefWidth="200.0">
+                                       <children>
+                                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#newSection" prefWidth="20.0" text="+" HBox.hgrow="ALWAYS" />
+                                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deleteSection" prefWidth="20.0" text="-" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <ListView fx:id="optionList" editable="true" fixedCellSize="24.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                       <contextMenu>
+                                          <ContextMenu>
+                                            <items>
+                                              <MenuItem mnemonicParsing="false" onAction="#newOption" text="New option" />
+                                                <MenuItem mnemonicParsing="false" onAction="#deleteOption" text="Delete option" />
+                                            </items>
+                                          </ContextMenu>
+                                       </contextMenu>
+                                    </ListView>
+                                    <HBox prefWidth="200.0">
+                                       <children>
+                                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#newOption" prefWidth="20.0" text="+" HBox.hgrow="ALWAYS" />
+                                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deleteOption" prefWidth="20.0" text="-" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                          </items>
+                        </SplitPane>
+                     </left>
+                  </BorderPane>
+            </content>
+          </Tab>
+          <Tab closable="false" text="Style" />
+            <Tab fx:id="previewTab" closable="false" text="Preview">
+               <content>
+                  <WebView fx:id="preview" prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+</fx:root>

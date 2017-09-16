@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.web.WebView?>
+<?import org.controlsfx.control.PropertySheet?>
+
+<fx:root dividerPositions="0.9" orientation="VERTICAL" type="SplitPane" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+   <items>
+      <ScrollPane fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vbarPolicy="ALWAYS">
+         <content>
+            <PropertySheet fx:id="propertySheet" maxHeight="1.7976931348623157E308" modeSwitcherVisible="false" searchBoxVisible="false" />
+         </content>
+      </ScrollPane>
+      <WebView prefHeight="200.0" prefWidth="200.0" />
+   </items>
+</fx:root>
