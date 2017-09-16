@@ -1,6 +1,5 @@
 package cyoastudio.data;
 
-import javafx.scene.paint.Color;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.*;
@@ -12,10 +11,10 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.canvas.*;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 
 public class Image {
 	private byte[] data;

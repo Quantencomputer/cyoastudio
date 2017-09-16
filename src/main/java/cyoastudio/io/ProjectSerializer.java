@@ -1,6 +1,5 @@
 package cyoastudio.io;
 
-import java.awt.Color;
 import java.io.*;
 import java.nio.file.Path;
 
@@ -12,6 +11,7 @@ import com.google.gson.*;
 import cyoastudio.Application;
 import cyoastudio.data.*;
 import cyoastudio.templating.Style;
+import javafx.scene.paint.Color;
 
 public class ProjectSerializer {
 	private static final String PROJECT_JSON_FILENAME = "project.json";

@@ -1,12 +1,12 @@
 package cyoastudio.io;
 
-import javafx.scene.paint.Color;
 import java.io.IOException;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.*;
 
-import cyoastudio.templating.*;
+import cyoastudio.templating.ProjectConverter;
+import javafx.scene.paint.Color;
 
 public class ColorAdapter extends TypeAdapter<Color> {
 	@Override
@@ -16,7 +16,7 @@ public class ColorAdapter extends TypeAdapter<Color> {
 			return null;
 		}
 
-		return Style.parseColor(reader.nextString());
+		return Color.web(reader.nextString());
 	}
 
 	@Override

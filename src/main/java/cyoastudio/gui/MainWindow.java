@@ -11,7 +11,7 @@ import org.controlsfx.dialog.ExceptionDialog;
 import org.zeroturnaround.zip.ZipUtil;
 
 import cyoastudio.data.*;
-import cyoastudio.io.*;
+import cyoastudio.io.ProjectSerializer;
 import cyoastudio.templating.*;
 import javafx.beans.value.*;
 import javafx.collections.FXCollections;

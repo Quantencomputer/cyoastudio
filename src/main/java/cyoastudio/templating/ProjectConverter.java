@@ -1,11 +1,11 @@
 package cyoastudio.templating;
 
-import javafx.scene.paint.Color;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import cyoastudio.data.*;
+import javafx.scene.paint.Color;
 
 public class ProjectConverter {
 	public static Map<String, Object> convert(Project p) {
@@ -19,7 +19,7 @@ public class ProjectConverter {
 
 		System.out.println(p.getTitle());
 		System.out.println(data.get("projectTitle"));
-		
+
 		return data;
 	}
 
@@ -97,14 +97,10 @@ public class ProjectConverter {
 	}
 
 	public static String convert(Color c) {
-		return "#" +
-				pad(Integer.toHexString((int) c.getRed() * 255)) +
-				pad(Integer.toHexString((int) c.getGreen() * 255)) +
-				pad(Integer.toHexString((int) c.getBlue() * 255)) +
-				pad(Integer.toHexString((int) c.getOpacity() * 255));
-	}
-
-	private static final String pad(String s) {
-		return (s.length() == 1) ? "0" + s : s;
+		return "rgba(" +
+				Integer.toString((int) c.getRed() * 255) + ", " +
+				Integer.toString((int) c.getGreen() * 255) + ", " +
+				Integer.toString((int) c.getBlue() * 255) + ", " +
+				Double.toString(c.getOpacity()) + ")";
 	}
 }
