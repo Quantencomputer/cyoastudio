@@ -1,6 +1,7 @@
 package cyoastudio.templating;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -31,7 +32,6 @@ public class ProjectConverter {
 				.map(ProjectConverter::convert).collect(Collectors.toList()));
 
 		data.put("numPerRow", s.getOptionsPerRow());
-		System.out.println(s.getImagePositioning());
 		switch (s.getImagePositioning()) {
 		case ALTERNATING:
 			data.put("imageClass", "alternating-images");
@@ -67,11 +67,17 @@ public class ProjectConverter {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		for (Entry<String, Object> i : style.entrySet()) {
+			String key = i.getKey();
 			Object value = i.getValue();
 			String repr;
 			if (value instanceof Color) {
 				repr = convert((Color) value);
 			} else if (value instanceof Image) {
+				//if (style.containsKey(key + "Color")) {
+					data.put(key + "Blended",
+							convert(((Image) value).blend(Color.GREEN)));
+					// (Color) style.get(key + "Color")
+				//}
 				repr = convert((Image) value);
 			} else if (value instanceof String) {
 				repr = (String) value;
@@ -79,7 +85,7 @@ public class ProjectConverter {
 				repr = value.toString();
 				System.out.println("Unknown value type in style options");
 			}
-			data.put(i.getKey(), repr);
+			data.put(key, repr);
 		}
 
 		return data;

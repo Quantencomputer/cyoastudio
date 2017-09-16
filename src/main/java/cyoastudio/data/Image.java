@@ -1,6 +1,6 @@
 package cyoastudio.data;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.*;
@@ -9,8 +9,8 @@ import java.util.Base64;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.pdfbox.pdmodel.graphics.blend.BlendComposite;
 
+import cyoastudio.util.MultiplyComposite;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
 
@@ -75,5 +75,24 @@ public class Image {
 			throw new RuntimeException(e);
 		}
 		return new Image(subimage);
+	}
+
+	public Image blend(Color color) {
+		BufferedImage src;
+		try {
+			src = toBufferedImage();
+			BufferedImage target = new BufferedImage(src.getWidth(), src.getHeight(),
+					BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2d = target.createGraphics();
+			g2d.drawImage(src, null, 0, 0);
+			g2d.setComposite(MultiplyComposite.Multiply);
+			g2d.setColor(color);
+			g2d.fillRect(0, 0, src.getWidth(), src.getHeight());
+			g2d.dispose();
+
+			return new Image(target);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
