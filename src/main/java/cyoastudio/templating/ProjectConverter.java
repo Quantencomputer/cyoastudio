@@ -17,9 +17,6 @@ public class ProjectConverter {
 				.map(ProjectConverter::convert).collect(Collectors.toList()));
 		data.put("style", convertStyle(p.getStyle()));
 
-		System.out.println(p.getTitle());
-		System.out.println(data.get("projectTitle"));
-
 		return data;
 	}
 
@@ -98,9 +95,9 @@ public class ProjectConverter {
 
 	public static String convert(Color c) {
 		return "rgba(" +
-				Integer.toString((int) c.getRed() * 255) + ", " +
-				Integer.toString((int) c.getGreen() * 255) + ", " +
-				Integer.toString((int) c.getBlue() * 255) + ", " +
+				Integer.toString((int) (c.getRed() * 255)) + ", " +
+				Integer.toString((int) (c.getGreen() * 255)) + ", " +
+				Integer.toString((int) (c.getBlue() * 255)) + ", " +
 				Double.toString(c.getOpacity()) + ")";
 	}
 }

@@ -1,6 +1,7 @@
 package cyoastudio.gui;
 
 import java.io.*;
+
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.controlsfx.dialog.ExceptionDialog;
+import org.slf4j.*;
 import org.zeroturnaround.zip.ZipUtil;
 
 import cyoastudio.data.*;
@@ -27,6 +29,8 @@ import javafx.stage.*;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 public class MainWindow extends BorderPane {
+
+	final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
 	@FXML
 	private BorderPane contentPane;
@@ -51,6 +55,7 @@ public class MainWindow extends BorderPane {
 	private static boolean dirty = false;
 	private Section selectedSection;
 	private Option selectedOption;
+	private StyleEditor editor;
 
 	// TODO remove this hack and make dirty not global
 	public static void touch() {
@@ -132,6 +137,9 @@ public class MainWindow extends BorderPane {
 				project.setTitle(newValue);
 			}
 		});
+		
+		editor = new StyleEditor();
+		styleTab.setContent(editor);
 		
 		cleanUp();
 	}
@@ -230,7 +238,7 @@ public class MainWindow extends BorderPane {
 
 	private void cleanUp() {
 		refreshSectionList();
-		buildStyleEditor();
+		updateStyleEditor();
 		updatePreview();
 		dirty = false;
 		selectedOption = null;
@@ -412,6 +420,10 @@ public class MainWindow extends BorderPane {
 		String website = project.getTemplate().render(project);
 		preview.getEngine().loadContent(website);
 		
+		saveTemp(website);
+	}
+
+	public static void saveTemp(String website) {
 		// TODO remove
 		try {
 			File tempFile = File.createTempFile("rendered_site", ".html");
@@ -422,14 +434,12 @@ public class MainWindow extends BorderPane {
 		}
 	}
 	
-	private void buildStyleEditor() {
-		StyleEditor editor = new StyleEditor(project.getStyle(), project.getTemplate());
-		styleTab.setContent(editor);
+	private void updateStyleEditor() {
+		editor.editStyle(project.getStyle(), project.getTemplate());
 	}
 
 	private void showError(String message, IOException ex) {
-		System.out.println(message);
-		ex.printStackTrace();
+		logger.error(message, ex);
 
 		ExceptionDialog exceptionDialog = new ExceptionDialog(ex);
 		exceptionDialog.show();
@@ -478,7 +488,7 @@ public class MainWindow extends BorderPane {
 		project.changeTemplate(template,
 				Style.parseStyleDefinition(path.resolve("style_options.json")));
 		updatePreview();
-		buildStyleEditor();
+		updateStyleEditor();
 	}
 
 }
