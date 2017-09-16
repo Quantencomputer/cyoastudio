@@ -1,6 +1,6 @@
 package cyoastudio.data;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.*;
@@ -10,15 +10,19 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import cyoastudio.util.MultiplyComposite;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.image.WritableImage;
 
 public class Image {
 	private byte[] data;
+	private transient BufferedImage b;
 
 	public Image(javafx.scene.image.Image image) {
-		BufferedImage b = SwingFXUtils.fromFXImage(image, null);
+		this.b = SwingFXUtils.fromFXImage(image, null);
 		try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
 			ImageIO.write(b, "png", stream);
 			data = stream.toByteArray();
@@ -32,6 +36,7 @@ public class Image {
 	}
 
 	public Image(BufferedImage b) {
+		this.b = b;
 		try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
 			ImageIO.write(b, "png", stream);
 			data = stream.toByteArray();
@@ -45,7 +50,7 @@ public class Image {
 	}
 
 	public Image() {
-		BufferedImage b = new BufferedImage(0, 0, BufferedImage.TYPE_INT_RGB);
+		this.b = new BufferedImage(0, 0, BufferedImage.TYPE_INT_RGB);
 		try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
 			ImageIO.write(b, "png", stream);
 			data = stream.toByteArray();
@@ -55,7 +60,10 @@ public class Image {
 	}
 
 	public BufferedImage toBufferedImage() throws IOException {
-		return ImageIO.read(new ByteArrayInputStream(data));
+		if (b == null) {
+			b = ImageIO.read(new ByteArrayInputStream(data));
+		}
+		return b;
 	}
 
 	public javafx.scene.image.Image toFX() {
@@ -78,21 +86,17 @@ public class Image {
 	}
 
 	public Image blend(Color color) {
-		BufferedImage src;
-		try {
-			src = toBufferedImage();
-			BufferedImage target = new BufferedImage(src.getWidth(), src.getHeight(),
-					BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g2d = target.createGraphics();
-			g2d.drawImage(src, null, 0, 0);
-			g2d.setComposite(MultiplyComposite.Multiply);
-			g2d.setColor(color);
-			g2d.fillRect(0, 0, src.getWidth(), src.getHeight());
-			g2d.dispose();
-
-			return new Image(target);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		javafx.scene.image.Image fxImg = toFX();
+		Canvas c = new Canvas(fxImg.getHeight(), fxImg.getWidth());
+		
+		GraphicsContext gc = c.getGraphicsContext2D();
+		gc.drawImage(fxImg, 0, 0);
+		gc.setGlobalBlendMode(BlendMode.MULTIPLY);
+		gc.setFill(new javafx.scene.paint.Color(color.getRed() / 255.0, color.getGreen() / 255.0, color.getBlue() / 255.0, color.getAlpha() / 255.0));
+		gc.fillRect(0, 0, fxImg.getHeight(), fxImg.getWidth());
+		
+		WritableImage image = new WritableImage((int) fxImg.getHeight(), (int) fxImg.getWidth());
+		c.snapshot(null, image);
+		return new Image(image);
 	}
 }
