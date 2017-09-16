@@ -1,6 +1,6 @@
 package cyoastudio.io;
 
-import java.awt.Color;
+import javafx.scene.paint.Color;
 import java.io.IOException;
 
 import com.google.gson.TypeAdapter;

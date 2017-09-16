@@ -1,7 +1,6 @@
 package cyoastudio.templating;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
+import javafx.scene.paint.Color;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -13,11 +12,14 @@ public class ProjectConverter {
 		Map<String, Object> data = new HashMap<>();
 
 		if (!p.getTitle().isEmpty())
-			data.put("title", p.getTitle());
+			data.put("projectTitle", p.getTitle());
 		data.put("sections", p.getSections().stream()
 				.map(ProjectConverter::convert).collect(Collectors.toList()));
 		data.put("style", convertStyle(p.getStyle()));
 
+		System.out.println(p.getTitle());
+		System.out.println(data.get("projectTitle"));
+		
 		return data;
 	}
 
@@ -25,7 +27,7 @@ public class ProjectConverter {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		if (!s.getTitle().isEmpty())
-			data.put("title", Markdown.render(s.getTitle()));
+			data.put("sectionTitle", Markdown.render(s.getTitle()));
 		if (!s.getDescription().isEmpty())
 			data.put("description", Markdown.render(s.getDescription()));
 		data.put("options", s.getOptions().stream()
@@ -54,7 +56,7 @@ public class ProjectConverter {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		if (!o.getTitle().isEmpty())
-			data.put("title", Markdown.render(o.getTitle()));
+			data.put("optionTitle", Markdown.render(o.getTitle()));
 		if (!o.getDescription().isEmpty())
 			data.put("description", Markdown.render(o.getDescription()));
 		if (o.getImage() != null)
@@ -73,11 +75,10 @@ public class ProjectConverter {
 			if (value instanceof Color) {
 				repr = convert((Color) value);
 			} else if (value instanceof Image) {
-				//if (style.containsKey(key + "Color")) {
+				if (style.containsKey(key + "Color")) {
 					data.put(key + "Blended",
-							convert(((Image) value).blend(Color.GREEN)));
-					// (Color) style.get(key + "Color")
-				//}
+							convert(((Image) value).blend((Color) style.get(key + "Color"))));
+				}
 				repr = convert((Image) value);
 			} else if (value instanceof String) {
 				repr = (String) value;
@@ -97,10 +98,10 @@ public class ProjectConverter {
 
 	public static String convert(Color c) {
 		return "#" +
-				pad(Integer.toHexString(c.getRed())) +
-				pad(Integer.toHexString(c.getGreen())) +
-				pad(Integer.toHexString(c.getBlue())) +
-				pad(Integer.toHexString(c.getAlpha()));
+				pad(Integer.toHexString((int) c.getRed() * 255)) +
+				pad(Integer.toHexString((int) c.getGreen() * 255)) +
+				pad(Integer.toHexString((int) c.getBlue() * 255)) +
+				pad(Integer.toHexString((int) c.getOpacity() * 255));
 	}
 
 	private static final String pad(String s) {

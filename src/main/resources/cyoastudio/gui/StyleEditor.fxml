@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 <?import org.controlsfx.control.PropertySheet?>
 
@@ -12,6 +14,11 @@
             <PropertySheet fx:id="propertySheet" maxHeight="1.7976931348623157E308" modeSwitcherVisible="false" searchBoxVisible="false" />
          </content>
       </ScrollPane>
-      <WebView prefHeight="200.0" prefWidth="200.0" />
+      <VBox>
+         <children>
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#updatePreview" text="Update preview" />
+            <WebView fx:id="preview" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
    </items>
 </fx:root>

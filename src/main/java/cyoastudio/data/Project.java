@@ -12,14 +12,14 @@ public class Project {
 
 	public Project() {
 		this.template = Template.defaultTemplate();
-		this.style = Template.defaultStyle();
+		this.style = Style.defaultStyle();
 	}
 
 	public Template getTemplate() {
 		return template;
 	}
 
-	public void setTemplate(Template template, Map<String, Object> style) {
+	public void changeTemplate(Template template, Map<String, Object> style) {
 		this.template = template;
 		this.style = style;
 		// TODO carry over setting (?)

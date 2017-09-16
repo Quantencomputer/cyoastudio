@@ -1,11 +1,14 @@
 package cyoastudio.gui;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.controlsfx.dialog.ExceptionDialog;
+import org.zeroturnaround.zip.ZipUtil;
 
 import cyoastudio.data.*;
 import cyoastudio.io.*;
@@ -37,11 +40,17 @@ public class MainWindow extends BorderPane {
 	private Tab previewTab;
 	@FXML
 	private WebView preview;
+	@FXML
+	private TextField projectTitleBox;
+	@FXML
+	private Tab styleTab;
 
 	private Stage stage;
 	private Project project = new Project();
 	private Path saveLocation;
 	private static boolean dirty = false;
+	private Section selectedSection;
+	private Option selectedOption;
 
 	// TODO remove this hack and make dirty not global
 	public static void touch() {
@@ -80,18 +89,32 @@ public class MainWindow extends BorderPane {
 				sectionList.getSelectionModel().select(event.getIndex());
 			}
 		});
-		sectionList.getSelectionModel().selectedIndexProperty().addListener(e -> editSection());
+		sectionList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (newValue != null) {
+					editSection();
+				}
+			}
+		});
 
 		optionList.setCellFactory(v -> EditCell.createStringEditCell());
 		optionList.setOnEditCommit(new EventHandler<ListView.EditEvent<String>>() {
 			@Override
 			public void handle(EditEvent<String> event) {
-				getCurrentSection().getOptions().get(event.getIndex()).setTitle(event.getNewValue());
+				selectedSection.getOptions().get(event.getIndex()).setTitle(event.getNewValue());
 				refreshOptionList();
 				optionList.getSelectionModel().select(event.getIndex());
 			}
 		});
-		optionList.getSelectionModel().selectedIndexProperty().addListener(e -> editOption());
+		optionList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (newValue != null) {
+					editOption();
+				}
+			}
+		});
 
 		tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
 			@Override
@@ -101,17 +124,43 @@ public class MainWindow extends BorderPane {
 				}
 			}
 		});
+		
+		projectTitleBox.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				touch();
+				project.setTitle(newValue);
+			}
+		});
+		
+		cleanUp();
 	}
 
 	private void editSection() {
+		int selectedIndex = sectionList.getSelectionModel().getSelectedIndex();
+		if (selectedIndex >= 0)
+			selectedSection = project.getSections().get(selectedIndex);
+		else
+			selectedSection = null;
+
 		refreshOptionList();
-		SectionEditor editor = new SectionEditor(getCurrentSection());
+		SectionEditor editor = new SectionEditor(selectedSection);
 		contentPane.setCenter(editor);
+
+		optionList.getSelectionModel().clearSelection();
 	}
 
 	private void editOption() {
-		OptionEditor editor = new OptionEditor(getCurrentOption(), getCurrentSection());
+		int selectedIndex = optionList.getSelectionModel().getSelectedIndex();
+		if (selectedIndex >= 0)
+			selectedOption = selectedSection.getOptions().get(selectedIndex);
+		else
+			selectedOption = null;
+
+		OptionEditor editor = new OptionEditor(selectedOption, selectedSection);
 		contentPane.setCenter(editor);
+
+		sectionList.getSelectionModel().clearSelection();
 	}
 
 	@FXML
@@ -155,7 +204,17 @@ public class MainWindow extends BorderPane {
 
 	@FXML
 	void exportImage() {
-
+		// TODO
+	}
+	
+	@FXML
+	void exportHTML() {
+		// TODO
+	}
+	
+	@FXML
+	void exportText() {
+		// TODO
 	}
 
 	@FXML
@@ -165,11 +224,18 @@ public class MainWindow extends BorderPane {
 		}
 
 		project = new Project();
-		refreshSectionList();
-		buildStylePane();
-		tabPane.getSelectionModel().select(0);
+		cleanUp();
 		saveLocation = null;
+	}
+
+	private void cleanUp() {
+		refreshSectionList();
+		buildStyleEditor();
+		updatePreview();
 		dirty = false;
+		selectedOption = null;
+		selectedSection = null;
+		projectTitleBox.setText(project.getTitle());
 	}
 
 	@FXML
@@ -187,20 +253,12 @@ public class MainWindow extends BorderPane {
 		if (selected != null) {
 			try {
 				project = ProjectSerializer.readFromZip(selected.toPath());
-				refreshSectionList();
-				buildStylePane();
-				tabPane.getSelectionModel().select(0);
 				saveLocation = selected.toPath();
-				dirty = false;
+				cleanUp();
 			} catch (IOException e) {
 				showError("Couldn't open file", e);
 			}
 		}
-	}
-
-	private void buildStylePane() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@FXML
@@ -296,27 +354,11 @@ public class MainWindow extends BorderPane {
 		}
 	}
 
-	private Section getCurrentSection() {
-		int selectedIndex = sectionList.getSelectionModel().getSelectedIndex();
-		if (selectedIndex >= 0)
-			return project.getSections().get(selectedIndex);
-		else
-			return null;
-	}
-
-	private Option getCurrentOption() {
-		int selectedIndex = optionList.getSelectionModel().getSelectedIndex();
-		if (selectedIndex >= 0)
-			return getCurrentSection().getOptions().get(selectedIndex);
-		else
-			return null;
-	}
-
 	@FXML
 	void newOption() {
 		touch();
-		if (getCurrentSection() != null) {
-			getCurrentSection().getOptions().add(new Option());
+		if (selectedSection != null) {
+			selectedSection.getOptions().add(new Option());
 			refreshOptionList();
 
 			// Make the new entry editable
@@ -329,7 +371,7 @@ public class MainWindow extends BorderPane {
 	}
 
 	private void refreshOptionList() {
-		Section cur = getCurrentSection();
+		Section cur = selectedSection;
 		if (cur == null) {
 			optionList.setItems(FXCollections.emptyObservableList());
 		} else {
@@ -352,10 +394,10 @@ public class MainWindow extends BorderPane {
 			return;
 
 		touch();
-		if (getCurrentSection() != null) {
+		if (selectedSection != null) {
 			int i = optionList.getSelectionModel().getSelectedIndex();
 			if (i >= 0) {
-				getCurrentSection().getOptions().remove(i);
+				selectedSection.getOptions().remove(i);
 				refreshOptionList();
 				if (i < optionList.getItems().size()) {
 					optionList.getSelectionModel().select(i);
@@ -367,22 +409,22 @@ public class MainWindow extends BorderPane {
 	}
 
 	private void updatePreview() {
+		String website = project.getTemplate().render(project);
+		preview.getEngine().loadContent(website);
+		
+		// TODO remove
 		try {
-			// TODO change to actual implementation
-			Template t = new Template(new FileInputStream("./templates/quantum/page.html.mustache"));
-			preview.getEngine().loadContent(t.render(project));
-			System.out.println(t.render(project));
+			File tempFile = File.createTempFile("rendered_site", ".html");
+			FileUtils.writeStringToFile(tempFile, website, Charset.forName("UTF-8"));
+			System.out.println(tempFile.getAbsolutePath());
 		} catch (IOException e) {
-			// TODO something?
 			e.printStackTrace();
 		}
 	}
-
-	@FXML
-	void setStyle() throws FileNotFoundException, IOException {
-		project.setTemplate(new Template(new FileInputStream("./templates/quantum/page.html.mustache")),
-				Style.parseStyleDefinition(Paths.get("./templates/quantum/style_options.json")));
-		System.out.println(project.getStyle().get("backgroundImage").getClass());
+	
+	private void buildStyleEditor() {
+		StyleEditor editor = new StyleEditor(project.getStyle(), project.getTemplate());
+		styleTab.setContent(editor);
 	}
 
 	private void showError(String message, IOException ex) {
@@ -392,4 +434,51 @@ public class MainWindow extends BorderPane {
 		ExceptionDialog exceptionDialog = new ExceptionDialog(ex);
 		exceptionDialog.show();
 	}
+	
+	@FXML
+	void templateFromFile() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Import template");
+		fileChooser.getExtensionFilters().addAll(
+				new ExtensionFilter("CYOA Studio Project", "*.cyoatemplate"),
+				new ExtensionFilter("All files", "*"));
+		File selected = fileChooser.showOpenDialog(stage);
+		if (selected != null) {
+			try {
+				Path tempDirectory = Files.createTempDirectory(null);
+				ZipUtil.unpack(selected, tempDirectory.toFile());
+				
+				loadTemplate(tempDirectory);
+				
+				FileUtils.deleteDirectory(tempDirectory.toFile());
+			} catch (IOException e) {
+				showError("Could not load template", e);
+			}
+		}
+	}
+	
+	@FXML
+	void templateFromFolder() {
+		DirectoryChooser directoryChooser = new DirectoryChooser();
+		directoryChooser.setTitle("Import template");
+		File selected = directoryChooser.showDialog(stage);
+		if (selected != null) {
+			try {
+				loadTemplate(selected.toPath());
+			} catch (IOException e) {
+				showError("Could not load template", e);
+			}
+		}
+	}
+
+	private void loadTemplate(Path path) throws IOException {
+		FileInputStream stream = new FileInputStream(path.resolve("page.html.mustache").toFile());
+		Template template = new Template(stream);
+		stream.close();
+		project.changeTemplate(template,
+				Style.parseStyleDefinition(path.resolve("style_options.json")));
+		updatePreview();
+		buildStyleEditor();
+	}
+
 }

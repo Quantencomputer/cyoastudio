@@ -42,11 +42,6 @@ public class Template {
 		return renderTemplateFromStream(new StringReader(template), data);
 	}
 
-	public static Map<String, Object> defaultStyle() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public static Template defaultTemplate() {
 		try {
 			return new Template(Template.class.getResource("PlainText.mustache").openStream());
