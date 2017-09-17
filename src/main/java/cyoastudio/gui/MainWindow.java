@@ -194,7 +194,7 @@ public class MainWindow extends BorderPane {
 		alert.setTitle("Are you sure?");
 		alert.setHeaderText("Are you sure?");
 		alert.setContentText("There may be unsaved changed. Are you sure you want to continue?");
-		centerDialog(alert);
+		Application.positionDialog((Dialog<?>) alert);
 
 		alert.getButtonTypes().setAll(continu, saveFirst, ButtonType.CANCEL);
 
@@ -409,7 +409,7 @@ public class MainWindow extends BorderPane {
 		a.setTitle("Are you sure?");
 		a.setHeaderText("Are you sure?");
 		a.setContentText("Are you sure you want to delete this section?");
-		centerDialog(a);
+		Application.positionDialog((Dialog<?>) a);
 		Optional<ButtonType> result = a.showAndWait();
 		if (result.get() != ButtonType.YES)
 			return;
@@ -462,7 +462,7 @@ public class MainWindow extends BorderPane {
 		a.setTitle("Are you sure?");
 		a.setHeaderText("Are you sure?");
 		a.setContentText("Are you sure you want to delete this option?");
-		centerDialog(a);
+		Application.positionDialog((Dialog<?>) a);
 		Optional<ButtonType> result = a.showAndWait();
 		if (result.get() != ButtonType.YES)
 			return;
@@ -508,7 +508,7 @@ public class MainWindow extends BorderPane {
 		logger.error(message, ex);
 
 		ExceptionDialog exceptionDialog = new ExceptionDialog(ex);
-		centerDialog(exceptionDialog);
+		Application.positionDialog((Dialog<?>) exceptionDialog);
 		exceptionDialog.show();
 	}
 
@@ -635,24 +635,6 @@ public class MainWindow extends BorderPane {
 		updatePreview();
 		updateStyleEditor();
 		touch();
-	}
-
-	private void centerDialog(Dialog<?> dialog) {
-		double stageCenterX = stage.getX() + stage.getWidth() / 2;
-		double stageCenterY = stage.getY() + stage.getHeight() / 2;
-
-		dialog.widthProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				dialog.setX(stageCenterX - dialog.getWidth() / 2);
-			}
-		});
-		dialog.heightProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				dialog.setY(stageCenterY - dialog.getHeight() / 2);
-			}
-		});
 	}
 
 }
