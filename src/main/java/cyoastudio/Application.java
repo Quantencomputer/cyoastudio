@@ -2,6 +2,7 @@ package cyoastudio;
 
 import java.io.*;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 import com.github.zafarkhaja.semver.Version;
 
@@ -10,6 +11,7 @@ import javafx.stage.Stage;
 
 public class Application extends javafx.application.Application {
 	private static Version version;
+	public static final Preferences preferences = Preferences.userNodeForPackage(Application.class);
 
 	@Override
 	public void start(Stage stage) throws Exception {
