@@ -19,6 +19,8 @@ import javafx.scene.paint.Color;
 public class Image {
 	private byte[] data;
 	private BufferedImage b;
+	private Image blendCache;
+	private Color cachedColor;
 
 	public Image(javafx.scene.image.Image image) {
 		this.b = SwingFXUtils.fromFXImage(image, null);
@@ -80,6 +82,9 @@ public class Image {
 	}
 
 	public Image blend(Color color) {
+		if (color.equals(cachedColor))
+			return blendCache;
+		
 		javafx.scene.image.Image fxImg = toFX();
 		Canvas c = new Canvas(fxImg.getWidth(), fxImg.getHeight());
 
@@ -91,6 +96,10 @@ public class Image {
 
 		WritableImage image = new WritableImage((int) fxImg.getWidth(), (int) fxImg.getHeight());
 		c.snapshot(null, image);
-		return new Image(image);
+		
+		blendCache = new Image(image);
+		cachedColor = color;
+		
+		return blendCache;
 	}
 }
