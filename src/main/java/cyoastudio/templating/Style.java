@@ -5,11 +5,14 @@ import java.nio.file.Path;
 import java.util.*;
 
 import org.json.*;
+import org.slf4j.*;
 
 import cyoastudio.data.Image;
 import javafx.scene.paint.Color;
 
 public class Style {
+	final static Logger logger = LoggerFactory.getLogger(Style.class);
+
 	public static Map<String, Object> parseStyleDefinition(Path source) throws IOException {
 		Map<String, Object> values = new HashMap<>();
 		FileInputStream input = new FileInputStream(source.toFile());
@@ -25,6 +28,15 @@ public class Style {
 		Map<String, Object> values = new HashMap<>();
 		for (String key : source.keySet()) {
 			values.put(key, parseField(key, (String) source.get(key), null));
+		}
+		return values;
+	}
+
+	public static Map<String, Object> parseStyleDefinition(InputStream source) throws IOException {
+		Map<String, Object> values = new HashMap<>();
+		JSONObject o = new JSONObject(new JSONTokener(source));
+		for (String key : o.keySet()) {
+			values.put(key, parseField(key, o.getString(key), null));
 		}
 		return values;
 	}
@@ -49,8 +61,11 @@ public class Style {
 	}
 
 	public static Map<String, Object> defaultStyle() {
-		// Path temp = Files.createTempDirectory(null);
-		// TODO
-		return new HashMap<>();
+		try {
+			return parseStyleDefinition(Style.class.getResourceAsStream("style_options.json"));
+		} catch (Exception e) {
+			logger.error("Couldn't load default style", e);
+			return new HashMap<>();
+		}
 	}
 }

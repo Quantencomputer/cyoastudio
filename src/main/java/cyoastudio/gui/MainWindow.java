@@ -218,12 +218,40 @@ public class MainWindow extends BorderPane {
 
 	@FXML
 	void exportHTML() {
-		// TODO
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Export HTML");
+		fileChooser.getExtensionFilters().addAll(
+				new ExtensionFilter("HTML files", "*.html", ".htm"),
+				new ExtensionFilter("All files", "*"));
+		File selected = fileChooser.showSaveDialog(stage);
+		if (selected != null) {
+			try {
+				String text = project.getTemplate().render(project);
+
+				FileUtils.writeStringToFile(selected, text, Charset.forName("UTF-8"));
+			} catch (IOException e) {
+				showError("Error while exporting", e);
+			}
+		}
 	}
 
 	@FXML
-	void exportText() {
-		// TODO
+	void exportJson() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Export plain text");
+		fileChooser.getExtensionFilters().addAll(
+				new ExtensionFilter("JSON files", "*.json"),
+				new ExtensionFilter("All files", "*"));
+		File selected = fileChooser.showSaveDialog(stage);
+		if (selected != null) {
+			try {
+				byte[] jsonData = ProjectSerializer.toBytes(project);
+
+				FileUtils.writeByteArrayToFile(selected, jsonData);
+			} catch (IOException e) {
+				showError("Error while exporting", e);
+			}
+		}
 	}
 
 	@FXML
@@ -491,8 +519,15 @@ public class MainWindow extends BorderPane {
 		stream.close();
 		project.changeTemplate(template,
 				Style.parseStyleDefinition(path.resolve("style_options.json")));
+		touch();
 		updatePreview();
 		updateStyleEditor();
+	}
+
+	@FXML
+	void defaultTemplate() {
+		project.changeTemplate(Template.defaultTemplate(), Style.defaultStyle());
+		touch();
 	}
 
 	private void centerDialog(Dialog<?> dialog) {

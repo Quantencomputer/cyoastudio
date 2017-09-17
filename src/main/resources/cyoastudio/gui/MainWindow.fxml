@@ -50,13 +50,14 @@
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#templateFromFile" text="From file..." />
                         <MenuItem mnemonicParsing="false" onAction="#templateFromFolder" text="From folder..." />
+                        <MenuItem mnemonicParsing="false" onAction="#defaultTemplate" text="Restore default template" />
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Export as">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#exportImage" text="Image..." />
                         <MenuItem mnemonicParsing="false" onAction="#exportHTML" text="HTML..." />
-                        <MenuItem mnemonicParsing="false" onAction="#exportText" text="Text..." />
+                        <MenuItem mnemonicParsing="false" onAction="#exportJson" text="JSON..." />
                     </items>
                   </Menu>
                   <SeparatorMenuItem mnemonicParsing="false" />

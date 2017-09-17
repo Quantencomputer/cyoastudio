@@ -5,12 +5,15 @@ import java.nio.charset.Charset;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.*;
 
 import com.github.mustachejava.*;
 
 import cyoastudio.data.Project;
 
 public class Template {
+	final static Logger logger = LoggerFactory.getLogger(Template.class);
+
 	private String source;
 
 	public Template(String source) {
@@ -45,9 +48,10 @@ public class Template {
 
 	public static Template defaultTemplate() {
 		try {
-			return new Template(Template.class.getResource("PlainText.mustache").openStream());
-		} catch (IOException e) {
-			throw new RuntimeException("Could not load default style", e);
+			return new Template(Template.class.getResource("page.html.mustache").openStream());
+		} catch (Exception e) {
+			logger.error("Could not load default template", e);
+			return new Template("");
 		}
 	}
 
