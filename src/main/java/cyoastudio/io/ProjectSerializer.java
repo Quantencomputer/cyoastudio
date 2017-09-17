@@ -12,6 +12,7 @@ import cyoastudio.Application;
 import cyoastudio.data.*;
 import cyoastudio.templating.Style;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 public class ProjectSerializer {
 	private static final String PROJECT_JSON_FILENAME = "project.json";
@@ -21,6 +22,7 @@ public class ProjectSerializer {
 		GsonBuilder builder = new GsonBuilder();
 		builder.registerTypeAdapter(Image.class, new ImageAdapter());
 		builder.registerTypeAdapter(Color.class, new ColorAdapter());
+		builder.registerTypeAdapter(Font.class, new FontAdapter());
 		gson = builder.create();
 	}
 

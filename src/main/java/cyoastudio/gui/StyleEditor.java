@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.controlsfx.control.PropertySheet;
 import org.controlsfx.control.PropertySheet.Item;
-import org.controlsfx.property.editor.PropertyEditor;
+import org.controlsfx.property.editor.*;
 
 import cyoastudio.data.*;
 import cyoastudio.templating.Template;
@@ -14,6 +14,7 @@ import javafx.animation.*;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.*;
 import javafx.scene.control.SplitPane;
+import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.util.*;
 
@@ -92,16 +93,6 @@ public class StyleEditor extends SplitPane {
 					public Optional<ObservableValue<? extends Object>> getObservableValue() {
 						return Optional.empty();
 					}
-
-					// @Override
-					// public Optional<Class<? extends PropertyEditor<?>>> getPropertyEditorClass()
-					// {
-					// if (value instanceof Image) {
-					// return Optional.of(ImagePropertyEditor.class);
-					// } else {
-					// return Optional.empty();
-					// }
-					// }
 
 					@Override
 					public String getName() {

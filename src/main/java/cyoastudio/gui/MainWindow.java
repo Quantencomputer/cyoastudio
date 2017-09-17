@@ -237,7 +237,7 @@ public class MainWindow extends BorderPane {
 				String text = project.getTemplate().render(project);
 
 				FileUtils.writeStringToFile(selected, text, Charset.forName("UTF-8"));
-			} catch (IOException e) {
+			} catch (Exception e) {
 				showError("Error while exporting", e);
 			}
 		}
@@ -263,7 +263,7 @@ public class MainWindow extends BorderPane {
 				byte[] jsonData = ProjectSerializer.toBytes(project);
 
 				FileUtils.writeByteArrayToFile(selected, jsonData);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				showError("Error while exporting", e);
 			}
 		}
@@ -500,7 +500,7 @@ public class MainWindow extends BorderPane {
 		editor.editStyle(project.getStyle(), project.getTemplate());
 	}
 
-	private void showError(String message, IOException ex) {
+	private void showError(String message, Exception ex) {
 		logger.error(message, ex);
 
 		ExceptionDialog exceptionDialog = new ExceptionDialog(ex);

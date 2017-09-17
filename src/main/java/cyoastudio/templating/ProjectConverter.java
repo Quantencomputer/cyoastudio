@@ -8,6 +8,7 @@ import org.slf4j.*;
 
 import cyoastudio.data.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 public class ProjectConverter {
 
@@ -82,6 +83,10 @@ public class ProjectConverter {
 				repr = convert((Image) value);
 			} else if (value instanceof String) {
 				repr = (String) value;
+			} else if (value instanceof Font) {
+				System.out.println(((Font) value).getName());
+				System.out.println(((Font) value).getFamily());
+				repr = ((Font) value).getFamily();
 			} else if (value == null) {
 				repr = "null";
 				Logger logger = LoggerFactory.getLogger(ProjectConverter.class);
