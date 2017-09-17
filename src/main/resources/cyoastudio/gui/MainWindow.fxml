@@ -49,6 +49,7 @@
                   <Menu mnemonicParsing="false" text="Import template">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#templateFromFile" text="From file..." />
+                        <MenuItem mnemonicParsing="false" onAction="#templateFromCss" text="From CSS file..." />
                         <MenuItem mnemonicParsing="false" onAction="#templateFromFolder" text="From folder..." />
                         <MenuItem mnemonicParsing="false" onAction="#defaultTemplate" text="Restore default template" />
                     </items>

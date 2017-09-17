@@ -83,7 +83,7 @@ public class Image {
 	public Image blend(Color color) {
 		if (color.equals(cachedColor))
 			return blendCache;
-		
+
 		javafx.scene.image.Image fxImg = toFX();
 		Canvas c = new Canvas(fxImg.getWidth(), fxImg.getHeight());
 
@@ -95,10 +95,10 @@ public class Image {
 
 		WritableImage image = new WritableImage((int) fxImg.getWidth(), (int) fxImg.getHeight());
 		c.snapshot(null, image);
-		
+
 		blendCache = new Image(image);
 		cachedColor = color;
-		
+
 		return blendCache;
 	}
 }

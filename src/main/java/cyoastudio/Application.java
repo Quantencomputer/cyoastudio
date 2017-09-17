@@ -19,7 +19,7 @@ public class Application extends javafx.application.Application {
 		Point mousePosition = MouseInfo.getPointerInfo().getLocation();
 		stage.setX(mousePosition.getX());
 		stage.setY(mousePosition.getY());
-		
+
 		new MainWindow(stage);
 
 		stage.setMaximized(true);

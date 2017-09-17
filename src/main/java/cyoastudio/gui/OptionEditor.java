@@ -43,7 +43,7 @@ public class OptionEditor extends GridPane {
 			this.setDisable(true);
 		} else {
 			nameLabel.setText(option.getTitle());
-			
+
 			descriptionField.setText(option.getDescription());
 			descriptionField.textProperty().addListener(new ChangeListener<String>() {
 				@Override
@@ -52,7 +52,7 @@ public class OptionEditor extends GridPane {
 					MainWindow.touch();
 				}
 			});
-			
+
 			styleClassesField.setText(option.getClasses());
 			styleClassesField.textProperty().addListener(new ChangeListener<String>() {
 				@Override

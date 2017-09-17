@@ -14,20 +14,23 @@ import cyoastudio.data.Project;
 public class Template {
 	final static Logger logger = LoggerFactory.getLogger(Template.class);
 
-	private String source;
+	private String pageSource;
+	private String styleSource;
 
-	public Template(String source) {
-		this.source = source;
-	}
-
-	public Template(InputStream stream) throws IOException {
-		this.source = IOUtils.toString(stream, Charset.forName("UTF-8"));
+	public Template(String pageSource, String styleSource) {
+		this.pageSource = pageSource;
+		this.styleSource = styleSource;
 	}
 
 	public String render(Project project) {
 		Map<String, Object> data = ProjectConverter.convert(project);
+		Map<String, Object> styleData = ProjectConverter.convertStyle(project.getStyle());
 
-		return renderTemplateFromString(source, data);
+		String style = renderTemplateFromString(styleSource, styleData);
+
+		data.put("style", style);
+
+		return renderTemplateFromString(pageSource, data);
 	}
 
 	public static String renderTemplateFromStream(Reader stream, Object data) {
@@ -48,11 +51,23 @@ public class Template {
 
 	public static Template defaultTemplate() {
 		try {
-			return new Template(Template.class.getResource("defaultTemplate/page.html.mustache").openStream());
+			String page = defaultPageSource();
+			String style = defaultStyleSource();
+			return new Template(page, style);
 		} catch (Exception e) {
 			logger.error("Could not load default template", e);
-			return new Template("");
+			return new Template("", "");
 		}
+	}
+
+	public static String defaultStyleSource() throws IOException {
+		return IOUtils.toString(Template.class.getResource("defaultTemplate/style.css.mustache"),
+				Charset.forName("UTF-8"));
+	}
+
+	public static String defaultPageSource() throws IOException {
+		return IOUtils.toString(Template.class.getResource("defaultTemplate/page.html.mustache"),
+				Charset.forName("UTF-8"));
 	}
 
 }

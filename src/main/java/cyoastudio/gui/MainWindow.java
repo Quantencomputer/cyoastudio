@@ -3,7 +3,7 @@ package cyoastudio.gui;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.*;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -221,7 +221,8 @@ public class MainWindow extends BorderPane {
 	void exportHTML() {
 		FileChooser fileChooser = new FileChooser();
 		try {
-			if (Application.preferences.get("lastDir", null) != null && Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
+			if (Application.preferences.get("lastDir", null) != null
+					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
 				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
 		} catch (Exception e) {
 			logger.warn("Coulnd't access preferences", e);
@@ -247,7 +248,8 @@ public class MainWindow extends BorderPane {
 	void exportJson() {
 		FileChooser fileChooser = new FileChooser();
 		try {
-			if (Application.preferences.get("lastDir", null) != null && Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
+			if (Application.preferences.get("lastDir", null) != null
+					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
 				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
 		} catch (Exception e) {
 			logger.warn("Coulnd't access preferences", e);
@@ -298,7 +300,8 @@ public class MainWindow extends BorderPane {
 
 		FileChooser fileChooser = new FileChooser();
 		try {
-			if (Application.preferences.get("lastDir", null) != null && Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
+			if (Application.preferences.get("lastDir", null) != null
+					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
 				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
 		} catch (Exception e) {
 			logger.warn("Coulnd't access preferences", e);
@@ -358,7 +361,8 @@ public class MainWindow extends BorderPane {
 	private boolean selectSaveLocation() {
 		FileChooser fileChooser = new FileChooser();
 		try {
-			if (Application.preferences.get("lastDir", null) != null && Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
+			if (Application.preferences.get("lastDir", null) != null
+					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
 				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
 		} catch (Exception e) {
 			logger.warn("Coulnd't access preferences", e);
@@ -512,7 +516,8 @@ public class MainWindow extends BorderPane {
 	void templateFromFile() {
 		FileChooser fileChooser = new FileChooser();
 		try {
-			if (Application.preferences.get("lastDir", null) != null && Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
+			if (Application.preferences.get("lastDir", null) != null
+					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
 				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
 		} catch (Exception e) {
 			logger.warn("Coulnd't access preferences", e);
@@ -531,7 +536,7 @@ public class MainWindow extends BorderPane {
 				loadTemplate(tempDirectory);
 
 				FileUtils.deleteDirectory(tempDirectory.toFile());
-			} catch (IOException e) {
+			} catch (Exception e) {
 				showError("Could not load template", e);
 			}
 		}
@@ -541,7 +546,8 @@ public class MainWindow extends BorderPane {
 	void templateFromFolder() {
 		DirectoryChooser directoryChooser = new DirectoryChooser();
 		try {
-			if (Application.preferences.get("lastDir", null) != null && Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
+			if (Application.preferences.get("lastDir", null) != null
+					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
 				directoryChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
 		} catch (Exception e) {
 			logger.warn("Coulnd't access preferences", e);
@@ -552,21 +558,75 @@ public class MainWindow extends BorderPane {
 			try {
 				Application.preferences.put("lastDir", selected.toPath().toAbsolutePath().toString());
 				loadTemplate(selected.toPath());
-			} catch (IOException e) {
+			} catch (Exception e) {
 				showError("Could not load template", e);
 			}
 		}
 	}
 
 	private void loadTemplate(Path path) throws IOException {
-		FileInputStream stream = new FileInputStream(path.resolve("page.html.mustache").toFile());
-		Template template = new Template(stream);
-		stream.close();
-		project.changeTemplate(template,
-				Style.parseStyleDefinition(path.resolve("style_options.json")));
+		Path pagePath = path.resolve("page.html.mustache");
+		String pageSource;
+		if (Files.isRegularFile(pagePath)) {
+			pageSource = FileUtils.readFileToString(pagePath.toFile(), Charset.forName("UTF-8"));
+		} else {
+			logger.info("No page template found, using default");
+			pageSource = Template.defaultPageSource();
+		}
+
+		Path stylePath = path.resolve("style.css.mustache");
+		String styleSource;
+		if (Files.isRegularFile(stylePath)) {
+			styleSource = FileUtils.readFileToString(stylePath.toFile(), Charset.forName("UTF-8"));
+		} else {
+			throw new RuntimeException("No style template found");
+		}
+
+		Path styleSettingsPath = path.resolve("style_options.json");
+		Map<String, Object> styleSettings;
+		if (Files.isRegularFile(styleSettingsPath)) {
+			styleSettings = Style.parseStyleDefinition(styleSettingsPath);
+		} else {
+			styleSettings = new HashMap<>();
+		}
+
+		Template template = new Template(pageSource, styleSource);
+		project.changeTemplate(template, styleSettings);
 		touch();
 		updatePreview();
 		updateStyleEditor();
+	}
+
+	@FXML
+	void templateFromCss() {
+		FileChooser fileChooser = new FileChooser();
+		try {
+			if (Application.preferences.get("lastDir", null) != null
+					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
+				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
+		} catch (Exception e) {
+			logger.warn("Coulnd't access preferences", e);
+		}
+		fileChooser.setTitle("Import template");
+		fileChooser.getExtensionFilters().addAll(
+				new ExtensionFilter("CSS files", "*.css"),
+				new ExtensionFilter("All files", "*"));
+		File selected = fileChooser.showOpenDialog(stage);
+		if (selected != null) {
+			try {
+				String pageSource = Template.defaultPageSource();
+				String styleSource = FileUtils.readFileToString(selected, Charset.forName("UTF-8"));
+				Map<String, Object> styleSettings = new HashMap<>();
+
+				Template template = new Template(pageSource, styleSource);
+				project.changeTemplate(template, styleSettings);
+				touch();
+				updatePreview();
+				updateStyleEditor();
+			} catch (Exception e) {
+				showError("Could not load template", e);
+			}
+		}
 	}
 
 	@FXML

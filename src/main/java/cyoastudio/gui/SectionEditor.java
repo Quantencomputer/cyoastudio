@@ -72,7 +72,7 @@ public class SectionEditor extends GridPane {
 			this.setDisable(true);
 		} else {
 			nameLabel.setText(section.getTitle());
-			
+
 			descriptionField.setText(section.getDescription());
 			descriptionField.textProperty().addListener(new ChangeListener<String>() {
 				@Override
@@ -81,7 +81,7 @@ public class SectionEditor extends GridPane {
 					MainWindow.touch();
 				}
 			});
-			
+
 			positioningBox.setValue(section.getImagePositioning());
 			positioningBox.valueProperty().addListener(new ChangeListener<ImagePositioning>() {
 				@Override
@@ -91,7 +91,7 @@ public class SectionEditor extends GridPane {
 					MainWindow.touch();
 				}
 			});
-			
+
 			optionsPerRowSlider.setValue(section.getOptionsPerRow());
 			optionsPerRowSlider.valueProperty().addListener(new ChangeListener<Number>() {
 				@Override
@@ -111,7 +111,7 @@ public class SectionEditor extends GridPane {
 					}
 				}
 			});
-			
+
 			aspectYField.setText(String.valueOf(section.getAspectY()));
 			aspectYField.textProperty().addListener(new ChangeListener<String>() {
 				@Override
@@ -123,7 +123,7 @@ public class SectionEditor extends GridPane {
 					}
 				}
 			});
-			
+
 			styleClassesField.setText(section.getClasses());
 			styleClassesField.textProperty().addListener(new ChangeListener<String>() {
 				@Override

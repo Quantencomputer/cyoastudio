@@ -31,7 +31,7 @@ public class FontAdapter extends TypeAdapter<Font> {
 
 		writer.value(s);
 	}
-	
+
 	public static Font getFont(String name) {
 		if (!Font.getFamilies().contains(name)) {
 			Alert a = new Alert(AlertType.WARNING);
