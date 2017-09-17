@@ -10,7 +10,6 @@ import org.slf4j.*;
 import cyoastudio.data.Image;
 import cyoastudio.io.FontAdapter;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
 public class Style {
 	final static Logger logger = LoggerFactory.getLogger(Style.class);

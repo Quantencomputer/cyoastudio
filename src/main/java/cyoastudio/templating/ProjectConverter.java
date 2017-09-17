@@ -84,8 +84,6 @@ public class ProjectConverter {
 			} else if (value instanceof String) {
 				repr = (String) value;
 			} else if (value instanceof Font) {
-				System.out.println(((Font) value).getName());
-				System.out.println(((Font) value).getFamily());
 				repr = ((Font) value).getFamily();
 			} else if (value == null) {
 				repr = "null";

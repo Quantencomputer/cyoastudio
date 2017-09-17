@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.controlsfx.control.PropertySheet;
 import org.controlsfx.control.PropertySheet.Item;
-import org.controlsfx.property.editor.*;
+import org.controlsfx.property.editor.PropertyEditor;
 
 import cyoastudio.data.*;
 import cyoastudio.templating.Template;
@@ -14,7 +14,6 @@ import javafx.animation.*;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.*;
 import javafx.scene.control.SplitPane;
-import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.util.*;
 
@@ -53,6 +52,7 @@ public class StyleEditor extends SplitPane {
 				return oldFactory.call(item);
 			}
 		});
+
 		updateEntries();
 	}
 

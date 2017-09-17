@@ -72,7 +72,6 @@ public class Image {
 	public Image trim(Rectangle2D r) {
 		try {
 			BufferedImage subimage;
-			System.out.println(r);
 			subimage = toBufferedImage().getSubimage((int) r.getMinX(), (int) r.getMinY(), (int) r.getWidth(),
 					(int) r.getHeight());
 			return new Image(subimage);
