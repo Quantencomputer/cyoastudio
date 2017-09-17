@@ -12,6 +12,7 @@
 		}
 
 		body {
+			font-family: {{{font}}};
 			background-color: {{{backgroundColor}}};
 			width: 1240px;
 			margin-left: auto;
@@ -119,7 +120,7 @@
 	<h1>{{{projectTitle}}}</h1>
 	{{/projectTitle}}
 	{{#sections}}
-	<section>
+	<section class="{{{classes}}}">
 		{{#sectionTitle}}
 		<h2>{{{sectionTitle}}}</h2>
 		{{/sectionTitle}}
@@ -132,7 +133,7 @@
 		{{/description}}
 		<div class="options {{imageClass}} row{{numPerRow}}">
 			{{#options}}
-			<div class="option">
+			<div class="option {{{classes}}}">
 				{{#image}}
 				<img src="{{image}}"/>
 				{{/image}}

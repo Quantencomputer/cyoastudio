@@ -572,6 +572,8 @@ public class MainWindow extends BorderPane {
 	@FXML
 	void defaultTemplate() {
 		project.changeTemplate(Template.defaultTemplate(), Style.defaultStyle());
+		updatePreview();
+		updateStyleEditor();
 		touch();
 	}
 

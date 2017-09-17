@@ -10,6 +10,7 @@ import org.slf4j.*;
 import cyoastudio.data.Image;
 import cyoastudio.io.FontAdapter;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 public class Style {
 	final static Logger logger = LoggerFactory.getLogger(Style.class);
@@ -57,6 +58,9 @@ public class Style {
 				}
 			}
 		} else if (fieldName.toLowerCase().endsWith("font")) {
+			if ("null".equals(data)) {
+				return Font.getDefault();
+			}
 			return FontAdapter.getFont(data);
 		}
 
@@ -65,7 +69,7 @@ public class Style {
 
 	public static Map<String, Object> defaultStyle() {
 		try {
-			return parseStyleDefinition(Style.class.getResourceAsStream("style_options.json"));
+			return parseStyleDefinition(Style.class.getResourceAsStream("defaultTemplate/style_options.json"));
 		} catch (Exception e) {
 			logger.error("Couldn't load default style", e);
 			return new HashMap<>();

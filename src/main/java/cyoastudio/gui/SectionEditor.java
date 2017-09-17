@@ -14,21 +14,18 @@ import javafx.util.StringConverter;
 public class SectionEditor extends GridPane {
 	@FXML
 	private Label nameLabel;
-
 	@FXML
 	private TextArea descriptionField;
-
 	@FXML
 	private ChoiceBox<ImagePositioning> positioningBox;
-
 	@FXML
 	private Slider optionsPerRowSlider;
-
 	@FXML
 	private TextField aspectXField;
-
 	@FXML
 	private TextField aspectYField;
+	@FXML
+	private TextField styleClassesField;
 
 	private Section section;
 
@@ -75,12 +72,8 @@ public class SectionEditor extends GridPane {
 			this.setDisable(true);
 		} else {
 			nameLabel.setText(section.getTitle());
+			
 			descriptionField.setText(section.getDescription());
-			positioningBox.setValue(section.getImagePositioning());
-			optionsPerRowSlider.setValue(section.getOptionsPerRow());
-			aspectXField.setText(String.valueOf(section.getAspectX()));
-			aspectYField.setText(String.valueOf(section.getAspectY()));
-
 			descriptionField.textProperty().addListener(new ChangeListener<String>() {
 				@Override
 				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -88,6 +81,8 @@ public class SectionEditor extends GridPane {
 					MainWindow.touch();
 				}
 			});
+			
+			positioningBox.setValue(section.getImagePositioning());
 			positioningBox.valueProperty().addListener(new ChangeListener<ImagePositioning>() {
 				@Override
 				public void changed(ObservableValue<? extends ImagePositioning> observable, ImagePositioning oldValue,
@@ -96,6 +91,8 @@ public class SectionEditor extends GridPane {
 					MainWindow.touch();
 				}
 			});
+			
+			optionsPerRowSlider.setValue(section.getOptionsPerRow());
 			optionsPerRowSlider.valueProperty().addListener(new ChangeListener<Number>() {
 				@Override
 				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -103,6 +100,7 @@ public class SectionEditor extends GridPane {
 				}
 			});
 
+			aspectXField.setText(String.valueOf(section.getAspectX()));
 			aspectXField.textProperty().addListener(new ChangeListener<String>() {
 				@Override
 				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -113,6 +111,8 @@ public class SectionEditor extends GridPane {
 					}
 				}
 			});
+			
+			aspectYField.setText(String.valueOf(section.getAspectY()));
 			aspectYField.textProperty().addListener(new ChangeListener<String>() {
 				@Override
 				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -121,6 +121,15 @@ public class SectionEditor extends GridPane {
 					} else {
 						section.setAspectY(Integer.valueOf(newValue));
 					}
+				}
+			});
+			
+			styleClassesField.setText(section.getClasses());
+			styleClassesField.textProperty().addListener(new ChangeListener<String>() {
+				@Override
+				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+					section.setClasses(newValue);
+					MainWindow.touch();
 				}
 			});
 		}

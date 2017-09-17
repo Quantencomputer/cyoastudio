@@ -23,7 +23,8 @@
       <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
       <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="NEVER" />
       <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" vgrow="NEVER" />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+      <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+      <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="NEVER" />
    </rowConstraints>
    <children>
       <Label text="Section name:" GridPane.halignment="RIGHT" />
@@ -53,6 +54,8 @@
             <TextField fx:id="aspectYField" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
+      <Label text="Style classes:" GridPane.rowIndex="6" />
+      <TextField fx:id="styleClassesField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
    </children>
    <padding>
       <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

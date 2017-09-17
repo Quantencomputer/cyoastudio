@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -21,6 +22,7 @@
       <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
       <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" vgrow="NEVER" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+      <RowConstraints minHeight="10.0" vgrow="NEVER" />
    </rowConstraints>
    <children>
       <Label text="Option name:" GridPane.halignment="RIGHT" />
@@ -44,6 +46,8 @@
             <Font size="18.0" />
          </font>
       </Label>
+      <Label text="Style classes:" GridPane.rowIndex="3" />
+      <TextField fx:id="styleClassesField" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
    </children>
    <padding>
       <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

@@ -31,6 +31,7 @@ public class ProjectConverter {
 			data.put("sectionTitle", Markdown.render(s.getTitle()));
 		if (!s.getDescription().isEmpty())
 			data.put("description", Markdown.render(s.getDescription()));
+		data.put("classes", s.getClasses());
 		data.put("options", s.getOptions().stream()
 				.map(ProjectConverter::convert).collect(Collectors.toList()));
 
@@ -62,6 +63,7 @@ public class ProjectConverter {
 			data.put("description", Markdown.render(o.getDescription()));
 		if (o.getImage() != null)
 			data.put("image", convert(o.getImage()));
+		data.put("classes", o.getClasses());
 
 		return data;
 	}

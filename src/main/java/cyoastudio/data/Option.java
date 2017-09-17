@@ -4,6 +4,7 @@ public class Option {
 	private String title = "";
 	private String description = "";
 	private Image image = null;
+	private String classes = "";
 
 	public String getTitle() {
 		return title;
@@ -27,5 +28,13 @@ public class Option {
 
 	public void setImage(Image image) {
 		this.image = image;
+	}
+
+	public String getClasses() {
+		return classes;
+	}
+
+	public void setClasses(String classes) {
+		this.classes = classes;
 	}
 }

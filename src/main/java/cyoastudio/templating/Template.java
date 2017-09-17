@@ -48,7 +48,7 @@ public class Template {
 
 	public static Template defaultTemplate() {
 		try {
-			return new Template(Template.class.getResource("page.html.mustache").openStream());
+			return new Template(Template.class.getResource("defaultTemplate/page.html.mustache").openStream());
 		} catch (Exception e) {
 			logger.error("Could not load default template", e);
 			return new Template("");

@@ -13,6 +13,7 @@ public class Section {
 	private List<Option> options = new ArrayList<>();
 	private int optionsPerRow = 3;
 	private int aspectX = 0, aspectY = 0;
+	private String classes = "";
 
 	public String getTitle() {
 		return title;
@@ -76,5 +77,13 @@ public class Section {
 		} else {
 			return aspectX / aspectY;
 		}
+	}
+
+	public String getClasses() {
+		return classes;
+	}
+
+	public void setClasses(String classes) {
+		this.classes = classes;
 	}
 }
