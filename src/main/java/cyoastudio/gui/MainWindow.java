@@ -192,8 +192,8 @@ public class MainWindow extends BorderPane {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Are you sure?");
 		alert.setHeaderText("Are you sure?");
-		// TODO check if there actually are such changes
 		alert.setContentText("There may be unsaved changed. Are you sure you want to continue?");
+		centerDialog(alert);
 
 		alert.getButtonTypes().setAll(continu, saveFirst, ButtonType.CANCEL);
 
@@ -228,7 +228,7 @@ public class MainWindow extends BorderPane {
 
 	@FXML
 	void newProject() {
-		if (!isUserSure("Exit")) {
+		if (!isUserSure("New project")) {
 			return;
 		}
 
@@ -249,7 +249,7 @@ public class MainWindow extends BorderPane {
 
 	@FXML
 	void openProject() {
-		if (!isUserSure("Exit")) {
+		if (!isUserSure("Open project")) {
 			return;
 		}
 
@@ -346,6 +346,7 @@ public class MainWindow extends BorderPane {
 		a.setTitle("Are you sure?");
 		a.setHeaderText("Are you sure?");
 		a.setContentText("Are you sure you want to delete this section?");
+		centerDialog(a);
 		Optional<ButtonType> result = a.showAndWait();
 		if (result.get() != ButtonType.YES)
 			return;
@@ -398,6 +399,7 @@ public class MainWindow extends BorderPane {
 		a.setTitle("Are you sure?");
 		a.setHeaderText("Are you sure?");
 		a.setContentText("Are you sure you want to delete this option?");
+		centerDialog(a);
 		Optional<ButtonType> result = a.showAndWait();
 		if (result.get() != ButtonType.YES)
 			return;
@@ -443,6 +445,7 @@ public class MainWindow extends BorderPane {
 		logger.error(message, ex);
 
 		ExceptionDialog exceptionDialog = new ExceptionDialog(ex);
+		centerDialog(exceptionDialog);
 		exceptionDialog.show();
 	}
 
@@ -490,6 +493,24 @@ public class MainWindow extends BorderPane {
 				Style.parseStyleDefinition(path.resolve("style_options.json")));
 		updatePreview();
 		updateStyleEditor();
+	}
+
+	private void centerDialog(Dialog<?> dialog) {
+		double stageCenterX = stage.getX() + stage.getWidth() / 2;
+		double stageCenterY = stage.getY() + stage.getHeight() / 2;
+
+		dialog.widthProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				dialog.setX(stageCenterX - dialog.getWidth() / 2);
+			}
+		});
+		dialog.heightProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				dialog.setY(stageCenterY - dialog.getHeight() / 2);
+			}
+		});
 	}
 
 }
