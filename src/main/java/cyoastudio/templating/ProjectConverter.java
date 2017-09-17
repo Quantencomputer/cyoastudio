@@ -19,7 +19,7 @@ public class ProjectConverter {
 			data.put("projectTitle", p.getTitle());
 		data.put("sections", p.getSections().stream()
 				.map(ProjectConverter::convert).collect(Collectors.toList()));
-		data.put("style", convertStyle(p.getStyle()));
+		data.put("costumCss", p.getCss());
 
 		return data;
 	}

@@ -24,7 +24,7 @@ public class Template {
 
 	public String render(Project project) {
 		Map<String, Object> data = ProjectConverter.convert(project);
-		Map<String, Object> styleData = ProjectConverter.convertStyle(project.getStyle());
+		Map<String, Object> styleData = ProjectConverter.convertStyle(project.getStyleOptions());
 
 		String style = renderTemplateFromString(styleSource, styleData);
 

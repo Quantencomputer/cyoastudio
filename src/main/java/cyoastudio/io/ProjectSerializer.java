@@ -50,8 +50,8 @@ public class ProjectSerializer {
 			throw new IOException("The project was created with a newer version of this program.");
 		}
 
-		if (p.project.getStyle() != null)
-			p.project.setStyle(Style.parseStringMap(p.project.getStyle()));
+		if (p.project.getStyleOptions() != null)
+			p.project.setStyle(Style.parseStringMap(p.project.getStyleOptions()));
 
 		return p.project;
 	}

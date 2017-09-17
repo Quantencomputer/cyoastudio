@@ -501,7 +501,7 @@ public class MainWindow extends BorderPane {
 	}
 
 	private void updateStyleEditor() {
-		editor.editStyle(project.getStyle(), project.getTemplate());
+		editor.editStyle(project);
 	}
 
 	private void showError(String message, Exception ex) {

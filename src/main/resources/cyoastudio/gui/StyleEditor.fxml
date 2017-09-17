@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 <?import org.controlsfx.control.PropertySheet?>
 
@@ -9,7 +13,17 @@
    <items>
       <ScrollPane fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vbarPolicy="ALWAYS">
          <content>
-            <PropertySheet fx:id="propertySheet" maxHeight="1.7976931348623157E308" modeSwitcherVisible="false" searchBoxVisible="false" />
+            <VBox alignment="CENTER" spacing="4.0">
+               <children>
+                  <PropertySheet fx:id="propertySheet" maxHeight="1.7976931348623157E308" modeSwitcherVisible="false" searchBoxVisible="false" />
+                  <Label contentDisplay="CENTER" text="Costum CSS:" VBox.vgrow="NEVER" />
+                  <TextArea fx:id="costumCssArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                     </VBox.margin>
+                  </TextArea>
+               </children>
+            </VBox>
          </content>
       </ScrollPane>
       <WebView fx:id="preview" prefHeight="200.0" prefWidth="200.0" />

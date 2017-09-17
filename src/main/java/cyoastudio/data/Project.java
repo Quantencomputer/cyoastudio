@@ -9,6 +9,7 @@ public class Project {
 	private Template template;
 	private Map<String, Object> style;
 	private List<Section> sections = new ArrayList<>();
+	private String css = "";
 
 	public Project() {
 		this.template = Template.defaultTemplate();
@@ -24,7 +25,7 @@ public class Project {
 		this.style = style;
 	}
 
-	public Map<String, Object> getStyle() {
+	public Map<String, Object> getStyleOptions() {
 		return style;
 	}
 
@@ -42,5 +43,13 @@ public class Project {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getCss() {
+		return css;
+	}
+
+	public void setCss(String css) {
+		this.css = css;
 	}
 }

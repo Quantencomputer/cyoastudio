@@ -11,9 +11,9 @@ import org.controlsfx.property.editor.PropertyEditor;
 import cyoastudio.data.*;
 import cyoastudio.templating.Template;
 import javafx.animation.*;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.value.*;
 import javafx.fxml.*;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.util.*;
 
@@ -22,9 +22,10 @@ public class StyleEditor extends SplitPane {
 	private PropertySheet propertySheet;
 	@FXML
 	private WebView preview;
+	@FXML
+	private TextArea costumCssArea;
 
-	private Map<String, Object> styleOptions;
-	private Template template;
+	private Project project;
 
 	private Timeline updateTimeLine = new Timeline(new KeyFrame(Duration.millis(100), e -> updatePreview()));
 
@@ -52,16 +53,26 @@ public class StyleEditor extends SplitPane {
 				return oldFactory.call(item);
 			}
 		});
+		costumCssArea.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (newValue != null) {
+					getProject().setCss(newValue);
+					MainWindow.touch();
+					queuePreviewUpdate();
+				}
+			}
+		});
 
-		updateEntries();
+		updateFields();
 	}
 
-	private void updateEntries() {
-		if (styleOptions == null) {
+	private void updateFields() {
+		if (project == null) {
 			propertySheet.getItems().clear();
 		} else {
 			propertySheet.getItems().clear();
-			List<Item> items = styleOptions.entrySet().stream().map(e -> {
+			List<Item> items = getStyleOptions().entrySet().stream().map(e -> {
 				String key = e.getKey();
 				Object value = e.getValue();
 				return new PropertySheet.Item() {
@@ -70,15 +81,15 @@ public class StyleEditor extends SplitPane {
 						// When destroying the old list is destroyed, all values are set to null.
 						// This has to be interrupted to prevent the insertion of null into the style
 						// options.
-						if (styleOptions.containsKey(key) && value != null) {
-							styleOptions.put(key, value);
+						if (getStyleOptions().containsKey(key) && value != null) {
+							getStyleOptions().put(key, value);
 							queuePreviewUpdate();
 						}
 					}
 
 					@Override
 					public Object getValue() {
-						return styleOptions.get(key);
+						return getStyleOptions().get(key);
 					}
 
 					@Override
@@ -111,13 +122,15 @@ public class StyleEditor extends SplitPane {
 				};
 			}).collect(Collectors.toList());
 			propertySheet.getItems().addAll(items);
+
+			costumCssArea.setText(project.getCss());
 		}
 	}
 
-	public void editStyle(Map<String, Object> styleOptions, Template template) {
-		this.styleOptions = styleOptions;
-		this.template = template;
-		initialize();
+	public void editStyle(Project project) {
+		this.project = project;
+
+		updateFields();
 	}
 
 	void queuePreviewUpdate() {
@@ -125,10 +138,11 @@ public class StyleEditor extends SplitPane {
 	}
 
 	void updatePreview() {
-		if (template != null && styleOptions != null) {
+		if (getTemplate() != null && getStyleOptions() != null) {
 			Project previewProject = previewProject();
-			previewProject.setStyle(styleOptions);
-			String html = template.render(previewProject);
+			previewProject.setStyle(getStyleOptions());
+			previewProject.setCss(project.getCss());
+			String html = getTemplate().render(previewProject);
 			preview.getEngine().loadContent(html);
 		}
 	}
@@ -150,5 +164,17 @@ public class StyleEditor extends SplitPane {
 		previewProject.getSections().add(s);
 
 		return previewProject;
+	}
+
+	private Project getProject() {
+		return project;
+	}
+
+	private Template getTemplate() {
+		return project.getTemplate();
+	}
+
+	private Map<String, Object> getStyleOptions() {
+		return project.getStyleOptions();
 	}
 }
