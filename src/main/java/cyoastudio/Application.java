@@ -1,5 +1,6 @@
 package cyoastudio;
 
+import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -15,6 +16,10 @@ public class Application extends javafx.application.Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+		Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+		stage.setX(mousePosition.getX());
+		stage.setY(mousePosition.getY());
+		
 		new MainWindow(stage);
 
 		stage.setMaximized(true);
