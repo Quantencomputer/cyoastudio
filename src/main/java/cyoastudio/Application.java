@@ -14,6 +14,8 @@ public class Application extends javafx.application.Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		new MainWindow(stage);
+
+		stage.setMaximized(true);
 	}
 
 	public static void main(String[] args) {
