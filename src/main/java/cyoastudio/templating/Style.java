@@ -49,7 +49,7 @@ public class Style {
 	}
 
 	public static Map<String, Object> defaultStyle() {
-		//Path temp = Files.createTempDirectory(null);
+		// Path temp = Files.createTempDirectory(null);
 		// TODO
 		return new HashMap<>();
 	}

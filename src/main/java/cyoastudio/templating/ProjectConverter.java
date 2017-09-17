@@ -4,10 +4,13 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.slf4j.*;
+
 import cyoastudio.data.*;
 import javafx.scene.paint.Color;
 
 public class ProjectConverter {
+
 	public static Map<String, Object> convert(Project p) {
 		Map<String, Object> data = new HashMap<>();
 
@@ -79,9 +82,14 @@ public class ProjectConverter {
 				repr = convert((Image) value);
 			} else if (value instanceof String) {
 				repr = (String) value;
+			} else if (value == null) {
+				repr = "null";
+				Logger logger = LoggerFactory.getLogger(ProjectConverter.class);
+				logger.warn("Null value in key {}", key);
 			} else {
 				repr = value.toString();
-				System.out.println("Unknown value type in style options");
+				Logger logger = LoggerFactory.getLogger(ProjectConverter.class);
+				logger.warn("Unknown value type in style options");
 			}
 			data.put(key, repr);
 		}

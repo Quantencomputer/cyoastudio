@@ -15,7 +15,7 @@ public class ImageAdapter extends TypeAdapter<Image> {
 			reader.nextNull();
 			return null;
 		}
-		
+
 		return new Image(reader.nextString());
 	}
 
@@ -25,7 +25,7 @@ public class ImageAdapter extends TypeAdapter<Image> {
 			writer.nullValue();
 			return;
 		}
-		
+
 		writer.value(value.toBase64());
 	}
 

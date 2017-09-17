@@ -1,7 +1,6 @@
 package cyoastudio.gui;
 
 import java.io.*;
-
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.Optional;
@@ -129,18 +128,20 @@ public class MainWindow extends BorderPane {
 				}
 			}
 		});
-		
+
 		projectTitleBox.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				touch();
-				project.setTitle(newValue);
+				if (!newValue.equals(project.getTitle())) {
+					touch();
+					project.setTitle(newValue);
+				}
 			}
 		});
-		
+
 		editor = new StyleEditor();
 		styleTab.setContent(editor);
-		
+
 		cleanUp();
 	}
 
@@ -214,12 +215,12 @@ public class MainWindow extends BorderPane {
 	void exportImage() {
 		// TODO
 	}
-	
+
 	@FXML
 	void exportHTML() {
 		// TODO
 	}
-	
+
 	@FXML
 	void exportText() {
 		// TODO
@@ -419,7 +420,7 @@ public class MainWindow extends BorderPane {
 	private void updatePreview() {
 		String website = project.getTemplate().render(project);
 		preview.getEngine().loadContent(website);
-		
+
 		saveTemp(website);
 	}
 
@@ -433,7 +434,7 @@ public class MainWindow extends BorderPane {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void updateStyleEditor() {
 		editor.editStyle(project.getStyle(), project.getTemplate());
 	}
@@ -444,7 +445,7 @@ public class MainWindow extends BorderPane {
 		ExceptionDialog exceptionDialog = new ExceptionDialog(ex);
 		exceptionDialog.show();
 	}
-	
+
 	@FXML
 	void templateFromFile() {
 		FileChooser fileChooser = new FileChooser();
@@ -457,16 +458,16 @@ public class MainWindow extends BorderPane {
 			try {
 				Path tempDirectory = Files.createTempDirectory(null);
 				ZipUtil.unpack(selected, tempDirectory.toFile());
-				
+
 				loadTemplate(tempDirectory);
-				
+
 				FileUtils.deleteDirectory(tempDirectory.toFile());
 			} catch (IOException e) {
 				showError("Could not load template", e);
 			}
 		}
 	}
-	
+
 	@FXML
 	void templateFromFolder() {
 		DirectoryChooser directoryChooser = new DirectoryChooser();

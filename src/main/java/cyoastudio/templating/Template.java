@@ -1,4 +1,4 @@
-	package cyoastudio.templating;
+package cyoastudio.templating;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -23,7 +23,7 @@ public class Template {
 
 	public String render(Project project) {
 		Map<String, Object> data = ProjectConverter.convert(project);
-		
+
 		return renderTemplateFromString(source, data);
 	}
 
@@ -38,6 +38,7 @@ public class Template {
 		}
 		return w.toString();
 	}
+
 	public static String renderTemplateFromString(String template, Object data) {
 		return renderTemplateFromStream(new StringReader(template), data);
 	}

@@ -6,13 +6,16 @@ import java.util.stream.Collectors;
 
 import org.controlsfx.control.PropertySheet;
 import org.controlsfx.control.PropertySheet.Item;
+import org.controlsfx.property.editor.PropertyEditor;
 
 import cyoastudio.data.*;
 import cyoastudio.templating.Template;
+import javafx.animation.*;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.*;
 import javafx.scene.control.SplitPane;
 import javafx.scene.web.WebView;
+import javafx.util.*;
 
 public class StyleEditor extends SplitPane {
 	@FXML
@@ -22,6 +25,8 @@ public class StyleEditor extends SplitPane {
 
 	private Map<String, Object> styleOptions;
 	private Template template;
+
+	private Timeline updateTimeLine = new Timeline(new KeyFrame(Duration.millis(100), e -> updatePreview()));
 
 	public StyleEditor() {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("StyleEditor.fxml"));
@@ -36,15 +41,38 @@ public class StyleEditor extends SplitPane {
 
 	@FXML
 	void initialize() {
-		if (styleOptions != null) {
+		Callback<Item, PropertyEditor<?>> oldFactory = propertySheet.getPropertyEditorFactory();
+		propertySheet.setPropertyEditorFactory(new Callback<PropertySheet.Item, PropertyEditor<?>>() {
+			@Override
+			public PropertyEditor<?> call(PropertySheet.Item item) {
+				if (item.getValue() instanceof Image) {
+					return ImagePropertyEditor.createImageEditor(item);
+				}
+
+				return oldFactory.call(item);
+			}
+		});
+		updateEntries();
+	}
+
+	private void updateEntries() {
+		if (styleOptions == null) {
+			propertySheet.getItems().clear();
+		} else {
+			propertySheet.getItems().clear();
 			List<Item> items = styleOptions.entrySet().stream().map(e -> {
 				String key = e.getKey();
 				Object value = e.getValue();
 				return new PropertySheet.Item() {
 					@Override
 					public void setValue(Object value) {
-						styleOptions.put(key, value);
-						updatePreview();
+						// When destroying the old list is destroyed, all values are set to null.
+						// This has to be interrupted to prevent the insertion of null into the style
+						// options.
+						if (styleOptions.containsKey(key) && value != null) {
+							styleOptions.put(key, value);
+							queuePreviewUpdate();
+						}
 					}
 
 					@Override
@@ -54,6 +82,9 @@ public class StyleEditor extends SplitPane {
 
 					@Override
 					public Class<?> getType() {
+						if (value == null) {
+							return Object.class;
+						}
 						return value.getClass();
 					}
 
@@ -61,6 +92,16 @@ public class StyleEditor extends SplitPane {
 					public Optional<ObservableValue<? extends Object>> getObservableValue() {
 						return Optional.empty();
 					}
+
+					// @Override
+					// public Optional<Class<? extends PropertyEditor<?>>> getPropertyEditorClass()
+					// {
+					// if (value instanceof Image) {
+					// return Optional.of(ImagePropertyEditor.class);
+					// } else {
+					// return Optional.empty();
+					// }
+					// }
 
 					@Override
 					public String getName() {
@@ -78,7 +119,6 @@ public class StyleEditor extends SplitPane {
 					}
 				};
 			}).collect(Collectors.toList());
-			propertySheet.getItems().clear();
 			propertySheet.getItems().addAll(items);
 		}
 	}
@@ -89,7 +129,10 @@ public class StyleEditor extends SplitPane {
 		initialize();
 	}
 
-	@FXML
+	void queuePreviewUpdate() {
+		updateTimeLine.playFromStart();
+	}
+
 	void updatePreview() {
 		if (template != null && styleOptions != null) {
 			Project previewProject = previewProject();

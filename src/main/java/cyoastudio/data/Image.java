@@ -54,7 +54,7 @@ public class Image {
 	public String toBase64() {
 		return Base64.getEncoder().encodeToString(getData());
 	}
-	
+
 	private byte[] getData() {
 		if (data == null) {
 			try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
@@ -70,6 +70,7 @@ public class Image {
 	public Image trim(Rectangle2D r) {
 		try {
 			BufferedImage subimage;
+			System.out.println(r);
 			subimage = toBufferedImage().getSubimage((int) r.getMinX(), (int) r.getMinY(), (int) r.getWidth(),
 					(int) r.getHeight());
 			return new Image(subimage);
@@ -80,15 +81,15 @@ public class Image {
 
 	public Image blend(Color color) {
 		javafx.scene.image.Image fxImg = toFX();
-		Canvas c = new Canvas(fxImg.getHeight(), fxImg.getWidth());
-		
+		Canvas c = new Canvas(fxImg.getWidth(), fxImg.getHeight());
+
 		GraphicsContext gc = c.getGraphicsContext2D();
 		gc.drawImage(fxImg, 0, 0);
 		gc.setGlobalBlendMode(BlendMode.MULTIPLY);
 		gc.setFill(color);
-		gc.fillRect(0, 0, fxImg.getHeight(), fxImg.getWidth());
-		
-		WritableImage image = new WritableImage((int) fxImg.getHeight(), (int) fxImg.getWidth());
+		gc.fillRect(0, 0, fxImg.getWidth(), fxImg.getHeight());
+
+		WritableImage image = new WritableImage((int) fxImg.getWidth(), (int) fxImg.getHeight());
 		c.snapshot(null, image);
 		return new Image(image);
 	}

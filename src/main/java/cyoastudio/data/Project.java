@@ -21,8 +21,14 @@ public class Project {
 
 	public void changeTemplate(Template template, Map<String, Object> style) {
 		this.template = template;
+
+		Map<String, Object> oldStyle = this.style;
 		this.style = style;
-		// TODO carry over setting (?)
+		for (String key : oldStyle.keySet()) {
+			if (style.containsKey(key)) {
+				style.put(key, oldStyle.get(key));
+			}
+		}
 	}
 
 	public Map<String, Object> getStyle() {

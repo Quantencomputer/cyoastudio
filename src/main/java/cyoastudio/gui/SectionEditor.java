@@ -21,14 +21,14 @@ public class SectionEditor extends GridPane {
 	@FXML
 	private ChoiceBox<ImagePositioning> positioningBox;
 
-    @FXML
-    private Slider optionsPerRowSlider;
+	@FXML
+	private Slider optionsPerRowSlider;
 
-    @FXML
-    private TextField aspectXField;
+	@FXML
+	private TextField aspectXField;
 
-    @FXML
-    private TextField aspectYField;
+	@FXML
+	private TextField aspectYField;
 
 	private Section section;
 
@@ -70,7 +70,7 @@ public class SectionEditor extends GridPane {
 				return null;
 			}
 		});
-		
+
 		if (section == null) {
 			this.setDisable(true);
 		} else {
@@ -104,25 +104,25 @@ public class SectionEditor extends GridPane {
 			});
 
 			aspectXField.textProperty().addListener(new ChangeListener<String>() {
-		        @Override
-		        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-		            if (!newValue.matches("\\d*")) {
-		                aspectXField.setText(newValue.replaceAll("[^\\d]", ""));
-		            } else {
-		            	section.setAspectX(Integer.valueOf(newValue));
-		            }
-		        }
-		    });
+				@Override
+				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+					if (!newValue.matches("\\d*")) {
+						aspectXField.setText(newValue.replaceAll("[^\\d]", ""));
+					} else {
+						section.setAspectX(Integer.valueOf(newValue));
+					}
+				}
+			});
 			aspectYField.textProperty().addListener(new ChangeListener<String>() {
-		        @Override
-		        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-		            if (!newValue.matches("\\d*")) {
-		                aspectYField.setText(newValue.replaceAll("[^\\d]", ""));
-		            } else {
-		            	section.setAspectY(Integer.valueOf(newValue));
-		            }
-		        }
-		    });
+				@Override
+				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+					if (!newValue.matches("\\d*")) {
+						aspectYField.setText(newValue.replaceAll("[^\\d]", ""));
+					} else {
+						section.setAspectY(Integer.valueOf(newValue));
+					}
+				}
+			});
 		}
 	}
 }

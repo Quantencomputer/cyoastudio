@@ -15,11 +15,11 @@ public class Application extends javafx.application.Application {
 	public void start(Stage stage) throws Exception {
 		new MainWindow(stage);
 	}
-	
-	public static void main(String[] args) {		
+
+	public static void main(String[] args) {
 		Locale.setDefault(Locale.US);
 		org.apache.log4j.BasicConfigurator.configure();
-		
+
 		try {
 			Properties properties = new Properties();
 			InputStream stream = Application.class.getResourceAsStream("application.properties");
@@ -29,10 +29,10 @@ public class Application extends javafx.application.Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		launch(args);
 	}
-	
+
 	public static Version getVersion() {
 		return version;
 	}
