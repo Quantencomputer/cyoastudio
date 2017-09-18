@@ -14,7 +14,7 @@ public class OptionEditor extends GridPane {
 	@FXML
 	private TextArea descriptionField;
 	@FXML
-	private Label nameLabel;
+	private TextField nameField;
 	@FXML
 	private Button imageButton;
 	@FXML
@@ -22,6 +22,7 @@ public class OptionEditor extends GridPane {
 
 	private Option option;
 	private Section section;
+	private Runnable onNameChange;
 
 	public OptionEditor(Option option, Section section) {
 		this.option = option;
@@ -42,7 +43,15 @@ public class OptionEditor extends GridPane {
 		if (option == null) {
 			this.setDisable(true);
 		} else {
-			nameLabel.setText(option.getTitle());
+			nameField.setText(option.getTitle());
+			nameField.textProperty().addListener(new ChangeListener<String>() {
+				@Override
+				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+					option.setTitle(newValue);
+					MainWindow.touch();
+					onNameChange.run();
+				}
+			});
 
 			descriptionField.setText(option.getDescription());
 			descriptionField.textProperty().addListener(new ChangeListener<String>() {
@@ -82,5 +91,9 @@ public class OptionEditor extends GridPane {
 		} else {
 			image.setImage(option.getImage().toFX());
 		}
+	}
+
+	public void setOnNameChange(Runnable onNameChange) {
+		this.onNameChange = onNameChange;
 	}
 }

@@ -13,7 +13,7 @@ import javafx.util.StringConverter;
 
 public class SectionEditor extends GridPane {
 	@FXML
-	private Label nameLabel;
+	private TextField nameField;
 	@FXML
 	private TextArea descriptionField;
 	@FXML
@@ -28,6 +28,7 @@ public class SectionEditor extends GridPane {
 	private TextField styleClassesField;
 
 	private Section section;
+	private Runnable onNameChange;
 
 	public SectionEditor(Section section) {
 		this.section = section;
@@ -71,7 +72,15 @@ public class SectionEditor extends GridPane {
 		if (section == null) {
 			this.setDisable(true);
 		} else {
-			nameLabel.setText(section.getTitle());
+			nameField.setText(section.getTitle());
+			nameField.textProperty().addListener(new ChangeListener<String>() {
+				@Override
+				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+					section.setTitle(newValue);
+					MainWindow.touch();
+					onNameChange.run();
+				}
+			});
 
 			descriptionField.setText(section.getDescription());
 			descriptionField.textProperty().addListener(new ChangeListener<String>() {
@@ -133,5 +142,9 @@ public class SectionEditor extends GridPane {
 				}
 			});
 		}
+	}
+
+	public void setOnNameChange(Runnable onNameChange) {
+		this.onNameChange = onNameChange;
 	}
 }

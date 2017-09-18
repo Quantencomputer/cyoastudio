@@ -10,7 +10,6 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
 
 <fx:root hgap="8.0" minHeight="200.0" minWidth="300.0" type="GridPane" vgap="8.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
    <columnConstraints>
@@ -32,14 +31,6 @@
       <Label layoutX="18.0" layoutY="25.0" text="Description:" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
       <Label layoutX="18.0" layoutY="25.0" text="Image positioning:" GridPane.rowIndex="1" />
       <ChoiceBox fx:id="positioningBox" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <Label fx:id="nameLabel" styleClass="title" text="No section selected" GridPane.columnIndex="1">
-         <GridPane.margin>
-            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-         </GridPane.margin>
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
       <Label layoutX="18.0" layoutY="60.0" text="Options per row:" GridPane.rowIndex="2" />
       <Slider fx:id="optionsPerRowSlider" blockIncrement="1.0" majorTickUnit="1.0" max="5.0" maxWidth="1.7976931348623157E308" min="1.0" minorTickCount="0" showTickLabels="true" snapToTicks="true" value="3.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
       <Label text="Image aspect ratio:" GridPane.rowIndex="3" />
@@ -56,6 +47,7 @@
       </HBox>
       <Label text="Style classes:" GridPane.rowIndex="6" />
       <TextField fx:id="styleClassesField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      <TextField fx:id="nameField" GridPane.columnIndex="1" />
    </children>
    <padding>
       <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

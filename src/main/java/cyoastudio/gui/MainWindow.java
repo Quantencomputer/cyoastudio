@@ -4,7 +4,6 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.controlsfx.dialog.ExceptionDialog;
@@ -16,13 +15,11 @@ import cyoastudio.data.*;
 import cyoastudio.io.ProjectSerializer;
 import cyoastudio.templating.*;
 import javafx.beans.value.*;
-import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
+import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ListView.EditEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebView;
 import javafx.stage.*;
@@ -35,9 +32,11 @@ public class MainWindow extends BorderPane {
 	@FXML
 	private BorderPane contentPane;
 	@FXML
-	private ListView<String> sectionList;
+	private ListView<Section> sectionList;
+	private ObservableList<Section> sectionObsList;
 	@FXML
-	private ListView<String> optionList;
+	private ListView<Option> optionList;
+	private ObservableList<Option> optionObsList;
 	@FXML
 	private TabPane tabPane;
 	@FXML
@@ -85,38 +84,82 @@ public class MainWindow extends BorderPane {
 
 	@FXML
 	void initialize() {
-		sectionList.setCellFactory(v -> EditCell.createStringEditCell());
-		sectionList.setOnEditCommit(new EventHandler<ListView.EditEvent<String>>() {
-			@Override
-			public void handle(EditEvent<String> event) {
-				project.getSections().get(event.getIndex()).setTitle(event.getNewValue());
-				refreshSectionList();
-				sectionList.getSelectionModel().select(event.getIndex());
-			}
+		sectionList.setCellFactory(list -> {
+			return new DragDropCell<Section>() {
+				@Override
+				protected String stringify(Section value) {
+					if (value.getTitle().trim().isEmpty())
+						return "[Unnamed section]";
+					return value.getTitle();
+				}
+
+				@Override
+				protected boolean receive(DragDropInfo info) {
+					if (isSourceOf(info)) {
+						Section moved = sectionObsList.remove(info.getIndex());
+						sectionObsList.add(getIndex(), moved);
+
+						return true;
+					} else {
+						Option moved = optionObsList.remove(info.getIndex());
+						getItem().getOptions().add(moved);
+
+						return true;
+					}
+				}
+
+				@Override
+				protected String getIdentifier() {
+					return "section";
+				}
+
+				@Override
+				protected boolean isCompatible(String identifier) {
+					return identifier.equals("section") || identifier.equals("option");
+				}
+			};
 		});
-		sectionList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+		sectionList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Section>() {
 			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+			public void changed(ObservableValue<? extends Section> observable, Section oldValue, Section newValue) {
 				if (newValue != null) {
-					editSection();
+					editSection(newValue);
 				}
 			}
 		});
 
-		optionList.setCellFactory(v -> EditCell.createStringEditCell());
-		optionList.setOnEditCommit(new EventHandler<ListView.EditEvent<String>>() {
-			@Override
-			public void handle(EditEvent<String> event) {
-				selectedSection.getOptions().get(event.getIndex()).setTitle(event.getNewValue());
-				refreshOptionList();
-				optionList.getSelectionModel().select(event.getIndex());
-			}
+		optionList.setCellFactory(list -> {
+			return new DragDropCell<Option>() {
+				@Override
+				protected String stringify(Option value) {
+					if (value.getTitle().trim().isEmpty())
+						return "[Unnamed option]";
+					return value.getTitle();
+				}
+
+				@Override
+				protected boolean receive(DragDropInfo info) {
+					if (isSourceOf(info)) {
+						Option moved = optionObsList.remove(info.getIndex());
+						optionObsList.add(getIndex(), moved);
+
+						return true;
+					} else {
+						throw new RuntimeException("Invalid drag'n'drop received");
+					}
+				}
+
+				@Override
+				protected String getIdentifier() {
+					return "option";
+				}
+			};
 		});
-		optionList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+		optionList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Option>() {
 			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+			public void changed(ObservableValue<? extends Option> observable, Option oldValue, Option newValue) {
 				if (newValue != null) {
-					editOption();
+					editOption(newValue);
 				}
 			}
 		});
@@ -146,28 +189,26 @@ public class MainWindow extends BorderPane {
 		cleanUp();
 	}
 
-	private void editSection() {
-		int selectedIndex = sectionList.getSelectionModel().getSelectedIndex();
-		if (selectedIndex >= 0)
-			selectedSection = project.getSections().get(selectedIndex);
-		else
-			selectedSection = null;
+	private void editSection(Section section) {
+		selectedSection = section;
 
 		refreshOptionList();
 		SectionEditor editor = new SectionEditor(selectedSection);
+		editor.setOnNameChange(() -> {
+			sectionList.refresh();
+		});
 		contentPane.setCenter(editor);
 
 		optionList.getSelectionModel().clearSelection();
 	}
 
-	private void editOption() {
-		int selectedIndex = optionList.getSelectionModel().getSelectedIndex();
-		if (selectedIndex >= 0)
-			selectedOption = selectedSection.getOptions().get(selectedIndex);
-		else
-			selectedOption = null;
+	private void editOption(Option option) {
+		selectedOption = option;
 
 		OptionEditor editor = new OptionEditor(selectedOption, selectedSection);
+		editor.setOnNameChange(() -> {
+			optionList.refresh();
+		});
 		contentPane.setCenter(editor);
 
 		sectionList.getSelectionModel().clearSelection();
@@ -396,10 +437,8 @@ public class MainWindow extends BorderPane {
 	}
 
 	private void refreshSectionList() {
-		sectionList.setItems(FXCollections.observableList(
-				project.getSections().stream()
-						.map(x -> x.getTitle())
-						.collect(Collectors.toList())));
+		sectionObsList = FXCollections.observableList(project.getSections());
+		sectionList.setItems(sectionObsList);
 	}
 
 	@FXML
@@ -448,10 +487,8 @@ public class MainWindow extends BorderPane {
 		if (cur == null) {
 			optionList.setItems(FXCollections.emptyObservableList());
 		} else {
-			optionList.setItems(FXCollections.observableList(
-					cur.getOptions().stream()
-							.map(x -> x.getTitle())
-							.collect(Collectors.toList())));
+			optionObsList = FXCollections.observableList(cur.getOptions());
+			optionList.setItems(optionObsList);
 		}
 	}
 
