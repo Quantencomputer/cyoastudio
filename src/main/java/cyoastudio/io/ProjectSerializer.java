@@ -66,4 +66,14 @@ public class ProjectSerializer {
 	public static Project readFromZip(Path target) throws IOException {
 		return fromBytes(ZipUtil.unpackEntry(target.toFile(), PROJECT_JSON_FILENAME));
 	}
+
+	// TODO remove
+	@SuppressWarnings("unchecked")
+	public static <T> T deepCopy(T source) {
+		try {
+			return (T) gson.fromJson(gson.toJsonTree(source), source.getClass());
+		} catch (ClassCastException e) {
+			throw new RuntimeException("Couldn't copy object", e);
+		}
+	}
 }

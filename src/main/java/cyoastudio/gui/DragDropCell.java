@@ -63,22 +63,22 @@ public abstract class DragDropCell<T> extends ListCell<T> {
 		});
 
 		setOnDragEntered(event -> {
-			if (!isEmpty() && event.getGestureSource() != DragDropCell.this &&
-					event.getDragboard().hasContent(objectFormat) &&
-					isCompatible(((DragDropInfo) event.getDragboard().getContent(objectFormat)).getSource())) {
+			if (!isEmpty() && event.getDragboard().hasContent(objectFormat) &&
+					isCompatible((DragDropInfo) event.getDragboard().getContent(objectFormat))) {
 				setOpacity(0.4);
 			}
 		});
 
 		setOnDragExited(event -> {
-			if (!isEmpty() && event.getGestureSource() != DragDropCell.this &&
-					event.getDragboard().hasContent(objectFormat) &&
-					isCompatible(((DragDropInfo) event.getDragboard().getContent(objectFormat)).getSource())) {
+			if (!isEmpty() && event.getDragboard().hasContent(objectFormat) &&
+					isCompatible((DragDropInfo) event.getDragboard().getContent(objectFormat))) {
 				setOpacity(1);
 			}
 		});
 
 		setOnDragDropped(event -> {
+			setOpacity(1);
+
 			if (getItem() == null) {
 				return;
 			}
@@ -119,7 +119,7 @@ public abstract class DragDropCell<T> extends ListCell<T> {
 
 	protected abstract String getIdentifier();
 
-	protected boolean isCompatible(String identifier) {
-		return identifier.equals(getIdentifier());
+	protected boolean isCompatible(DragDropInfo info) {
+		return info.getSource().equals(getIdentifier());
 	}
 }

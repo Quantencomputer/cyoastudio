@@ -96,4 +96,8 @@ public class OptionEditor extends GridPane {
 	public void setOnNameChange(Runnable onNameChange) {
 		this.onNameChange = onNameChange;
 	}
+
+	public void focusNameField() {
+		nameField.requestFocus();
+	}
 }

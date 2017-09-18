@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.controlsfx.dialog.ExceptionDialog;
@@ -84,6 +85,10 @@ public class MainWindow extends BorderPane {
 
 	@FXML
 	void initialize() {
+		MultipleSelectionModel<Section> sectionModel = sectionList.getSelectionModel();
+		MultipleSelectionModel<Option> optionModel = optionList.getSelectionModel();
+
+		sectionModel.setSelectionMode(SelectionMode.MULTIPLE);
 		sectionList.setCellFactory(list -> {
 			return new DragDropCell<Section>() {
 				@Override
@@ -96,14 +101,24 @@ public class MainWindow extends BorderPane {
 				@Override
 				protected boolean receive(DragDropInfo info) {
 					if (isSourceOf(info)) {
-						Section moved = sectionObsList.remove(info.getIndex());
-						sectionObsList.add(getIndex(), moved);
+						// Ordering sections
+						Section targetItem = getItem();
 
+						ArrayList<Section> movingOptions = new ArrayList<>(sectionModel.getSelectedItems());
+						sectionObsList.removeAll(movingOptions);
+
+						int target = sectionObsList.indexOf(targetItem) + 1;
+						sectionObsList.addAll(target, movingOptions);
+
+						touch();
 						return true;
 					} else {
-						Option moved = optionObsList.remove(info.getIndex());
-						getItem().getOptions().add(moved);
+						// Moving options between sections
+						ArrayList<Option> movingOptions = new ArrayList<>(optionModel.getSelectedItems());
+						optionObsList.removeAll(movingOptions);
+						getItem().getOptions().addAll(movingOptions);
 
+						touch();
 						return true;
 					}
 				}
@@ -114,12 +129,13 @@ public class MainWindow extends BorderPane {
 				}
 
 				@Override
-				protected boolean isCompatible(String identifier) {
-					return identifier.equals("section") || identifier.equals("option");
+				protected boolean isCompatible(DragDropInfo info) {
+					return (info.getSource().equals("section") && !sectionModel.isSelected(getIndex()))
+							|| info.getSource().equals("option");
 				}
 			};
 		});
-		sectionList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Section>() {
+		sectionModel.selectedItemProperty().addListener(new ChangeListener<Section>() {
 			@Override
 			public void changed(ObservableValue<? extends Section> observable, Section oldValue, Section newValue) {
 				if (newValue != null) {
@@ -128,6 +144,7 @@ public class MainWindow extends BorderPane {
 			}
 		});
 
+		optionModel.setSelectionMode(SelectionMode.MULTIPLE);
 		optionList.setCellFactory(list -> {
 			return new DragDropCell<Option>() {
 				@Override
@@ -140,9 +157,15 @@ public class MainWindow extends BorderPane {
 				@Override
 				protected boolean receive(DragDropInfo info) {
 					if (isSourceOf(info)) {
-						Option moved = optionObsList.remove(info.getIndex());
-						optionObsList.add(getIndex(), moved);
+						Option targetItem = getItem();
 
+						ArrayList<Option> movingOptions = new ArrayList<>(optionModel.getSelectedItems());
+						optionObsList.removeAll(movingOptions);
+
+						int target = optionObsList.indexOf(targetItem) + 1;
+						optionObsList.addAll(target, movingOptions);
+
+						touch();
 						return true;
 					} else {
 						throw new RuntimeException("Invalid drag'n'drop received");
@@ -153,9 +176,14 @@ public class MainWindow extends BorderPane {
 				protected String getIdentifier() {
 					return "option";
 				}
+
+				@Override
+				protected boolean isCompatible(DragDropInfo info) {
+					return (info.getSource().equals("option") && !optionModel.isSelected(getIndex()));
+				}
 			};
 		});
-		optionList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Option>() {
+		optionModel.selectedItemProperty().addListener(new ChangeListener<Option>() {
 			@Override
 			public void changed(ObservableValue<? extends Option> observable, Option oldValue, Option newValue) {
 				if (newValue != null) {
@@ -433,7 +461,9 @@ public class MainWindow extends BorderPane {
 		int i = sectionList.getItems().size() - 1;
 		sectionList.scrollTo(i);
 		sectionList.getSelectionModel().select(i);
-		sectionList.edit(i);
+
+		SectionEditor editor = (SectionEditor) contentPane.getCenter();
+		editor.focusNameField();
 	}
 
 	private void refreshSectionList() {
@@ -442,28 +472,36 @@ public class MainWindow extends BorderPane {
 	}
 
 	@FXML
-	void deleteSection() {
+	void deleteSections() {
 		Alert a = new Alert(AlertType.CONFIRMATION);
 		a.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 		a.setTitle("Are you sure?");
 		a.setHeaderText("Are you sure?");
-		a.setContentText("Are you sure you want to delete this section?");
+		a.setContentText("Are you sure you want to delete the selected sections?");
 		Application.positionDialog((Dialog<?>) a);
 		Optional<ButtonType> result = a.showAndWait();
 		if (result.get() != ButtonType.YES)
 			return;
 
 		touch();
-		int i = sectionList.getSelectionModel().getSelectedIndex();
-		if (i >= 0) {
-			project.getSections().remove(i);
-			refreshSectionList();
-			if (i < sectionList.getItems().size()) {
-				sectionList.getSelectionModel().select(i);
-			} else if (i - 1 >= 0 && i - 1 < sectionList.getItems().size()) {
-				sectionList.getSelectionModel().select(i - 1);
-			}
-		}
+		sectionObsList.removeAll(sectionList.getSelectionModel().getSelectedItems());
+	}
+
+	@FXML
+	void duplicateSections() {
+		MultipleSelectionModel<Section> selection = sectionList.getSelectionModel();
+		List<Integer> indices = selection.getSelectedIndices();
+		int targetPosition = indices.get(indices.size() - 1);
+		List<Section> copies = selection.getSelectedItems().parallelStream()
+				.map(s -> ProjectSerializer.deepCopy(s)).collect(Collectors.toList());
+		sectionObsList.addAll(targetPosition + 1, copies);
+		touch();
+	}
+
+	@FXML
+	void sortSections() {
+		sectionObsList.sort((a, b) -> a.getTitle().compareTo(b.getTitle()));
+		touch();
 	}
 
 	@FXML
@@ -479,6 +517,9 @@ public class MainWindow extends BorderPane {
 			optionList.scrollTo(i);
 			optionList.getSelectionModel().select(i);
 			optionList.edit(i);
+
+			OptionEditor editor = (OptionEditor) contentPane.getCenter();
+			editor.focusNameField();
 		}
 	}
 
@@ -493,7 +534,7 @@ public class MainWindow extends BorderPane {
 	}
 
 	@FXML
-	void deleteOption() {
+	void deleteOptions() {
 		Alert a = new Alert(AlertType.CONFIRMATION);
 		a.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 		a.setTitle("Are you sure?");
@@ -506,17 +547,25 @@ public class MainWindow extends BorderPane {
 
 		touch();
 		if (selectedSection != null) {
-			int i = optionList.getSelectionModel().getSelectedIndex();
-			if (i >= 0) {
-				selectedSection.getOptions().remove(i);
-				refreshOptionList();
-				if (i < optionList.getItems().size()) {
-					optionList.getSelectionModel().select(i);
-				} else if (i - 1 >= 0 && i - 1 < optionList.getItems().size()) {
-					optionList.getSelectionModel().select(i - 1);
-				}
-			}
+			optionObsList.removeAll(optionList.getSelectionModel().getSelectedItems());
 		}
+	}
+
+	@FXML
+	void duplicateOptions() {
+		MultipleSelectionModel<Option> selection = optionList.getSelectionModel();
+		List<Integer> indices = selection.getSelectedIndices();
+		int targetPosition = indices.get(indices.size() - 1);
+		List<Option> copies = selection.getSelectedItems().parallelStream()
+				.map(o -> ProjectSerializer.deepCopy(o)).collect(Collectors.toList());
+		optionObsList.addAll(targetPosition + 1, copies);
+		touch();
+	}
+
+	@FXML
+	void sortOptions() {
+		optionObsList.sort((a, b) -> a.getTitle().compareTo(b.getTitle()));
+		touch();
 	}
 
 	private void updatePreview() {

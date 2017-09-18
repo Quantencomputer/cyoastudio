@@ -65,6 +65,19 @@
                   <MenuItem mnemonicParsing="false" onAction="#exitProgram" text="Exit" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Edit">
+              <items>
+                  <MenuItem mnemonicParsing="false" onAction="#newSection" text="New section" />
+                  <MenuItem mnemonicParsing="false" onAction="#deleteSections" text="Delete selected sections" />
+                  <MenuItem mnemonicParsing="false" onAction="#duplicateSections" text="Duplicate selected sections" />
+                  <MenuItem mnemonicParsing="false" onAction="#sortSections" text="Sort sections alphabetically" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#newOption" text="New option" />
+                  <MenuItem mnemonicParsing="false" onAction="#deleteOptions" text="Delete selected options" />
+                  <MenuItem mnemonicParsing="false" onAction="#duplicateOptions" text="Duplicate selected options" />
+                  <MenuItem mnemonicParsing="false" onAction="#sortOptions" text="Sort options alphabetically" />
+              </items>
+            </Menu>
         </menus>
       </MenuBar>
    </top>
@@ -79,12 +92,13 @@
                           <items>
                               <VBox>
                                  <children>
-                                    <ListView fx:id="sectionList" editable="true" fixedCellSize="24.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                    <ListView fx:id="sectionList" fixedCellSize="24.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                        <contextMenu>
                                           <ContextMenu>
                                              <items>
                                                 <MenuItem mnemonicParsing="false" onAction="#newSection" text="New section" />
-                                                <MenuItem mnemonicParsing="false" onAction="#deleteSection" text="Delete section" />
+                                                <MenuItem mnemonicParsing="false" onAction="#deleteSections" text="Delete sections" />
+                                                <MenuItem mnemonicParsing="false" onAction="#duplicateSections" text="Duplicate sections" />
                                              </items>
                                           </ContextMenu>
                                        </contextMenu>
@@ -92,19 +106,20 @@
                                     <HBox prefWidth="200.0">
                                        <children>
                                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#newSection" prefWidth="20.0" text="+" HBox.hgrow="ALWAYS" />
-                                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deleteSection" prefWidth="20.0" text="-" HBox.hgrow="ALWAYS" />
+                                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deleteSections" prefWidth="20.0" text="-" HBox.hgrow="ALWAYS" />
                                        </children>
                                     </HBox>
                                  </children>
                               </VBox>
                               <VBox>
                                  <children>
-                                    <ListView fx:id="optionList" editable="true" fixedCellSize="24.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                    <ListView fx:id="optionList" fixedCellSize="24.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                        <contextMenu>
                                           <ContextMenu>
                                             <items>
                                               <MenuItem mnemonicParsing="false" onAction="#newOption" text="New option" />
-                                                <MenuItem mnemonicParsing="false" onAction="#deleteOption" text="Delete option" />
+                                                <MenuItem mnemonicParsing="false" onAction="#deleteOptions" text="Delete options" />
+                                                <MenuItem mnemonicParsing="false" onAction="#duplicateOptions" text="Duplicate options" />
                                             </items>
                                           </ContextMenu>
                                        </contextMenu>
@@ -112,7 +127,7 @@
                                     <HBox prefWidth="200.0">
                                        <children>
                                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#newOption" prefWidth="20.0" text="+" HBox.hgrow="ALWAYS" />
-                                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deleteOption" prefWidth="20.0" text="-" HBox.hgrow="ALWAYS" />
+                                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deleteOptions" prefWidth="20.0" text="-" HBox.hgrow="ALWAYS" />
                                        </children>
                                     </HBox>
                                  </children>

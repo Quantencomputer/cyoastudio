@@ -86,4 +86,9 @@ public class Section {
 	public void setClasses(String classes) {
 		this.classes = classes;
 	}
+
+	@Override
+	public String toString() {
+		return "Section " + (title == null ? "null" : title);
+	}
 }
