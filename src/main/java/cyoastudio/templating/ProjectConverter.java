@@ -13,12 +13,17 @@ import javafx.scene.text.Font;
 public class ProjectConverter {
 
 	public static Map<String, Object> convert(Project p) {
+		return convert(p, true, 0, p.getSections().size());
+	}
+
+	public static Map<String, Object> convert(Project p, boolean includeTitle, int start, int end) {
 		Map<String, Object> data = new HashMap<>();
 
-		if (!p.getTitle().isEmpty())
+		if (includeTitle && !p.getTitle().isEmpty())
 			data.put("projectTitle", p.getTitle());
-		data.put("sections", p.getSections().stream()
-				.map(ProjectConverter::convert).collect(Collectors.toList()));
+		if (start <= end && end <= p.getSections().size())
+			data.put("sections", p.getSections().subList(start, end).stream()
+					.map(ProjectConverter::convert).collect(Collectors.toList()));
 		data.put("costumCss", p.getCss());
 
 		return data;

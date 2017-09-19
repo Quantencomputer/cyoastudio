@@ -10,6 +10,7 @@ public class Project {
 	private Map<String, Object> style;
 	private List<Section> sections = new ArrayList<>();
 	private String css = "";
+	private Settings settings = new Settings();
 
 	public Project() {
 		this.template = Template.defaultTemplate();
@@ -51,5 +52,9 @@ public class Project {
 
 	public void setCss(String css) {
 		this.css = css;
+	}
+
+	public Settings getSettings() {
+		return settings;
 	}
 }

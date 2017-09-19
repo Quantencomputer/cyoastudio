@@ -161,10 +161,13 @@
                                       </columnConstraints>
                                       <rowConstraints>
                                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
                                           <Label text="Project title:" />
                                           <TextField fx:id="projectTitleBox" GridPane.columnIndex="1" />
+                                          <Label text="Maximum image height:" GridPane.rowIndex="1" />
+                                          <TextField fx:id="imageHeightField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                        </children>
                                        <padding>
                                           <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

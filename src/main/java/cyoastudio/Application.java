@@ -8,10 +8,7 @@ import java.util.prefs.Preferences;
 import com.github.zafarkhaja.semver.Version;
 
 import cyoastudio.gui.MainWindow;
-import javafx.beans.value.*;
-import javafx.geometry.*;
-import javafx.scene.control.Dialog;
-import javafx.stage.*;
+import javafx.stage.Stage;
 
 public class Application extends javafx.application.Application {
 	private static Version version;
@@ -48,30 +45,4 @@ public class Application extends javafx.application.Application {
 	public static Version getVersion() {
 		return version;
 	}
-
-	// TODO remove
-	public static void positionDialog(Dialog<?> dialog) {
-		Point awtMousePosition = MouseInfo.getPointerInfo().getLocation();
-		Point2D mousePosition = new Point2D(awtMousePosition.getX(), awtMousePosition.getY());
-
-		Screen screen = Screen.getScreens().filtered(s -> s.getBounds().contains(mousePosition)).get(0);
-		Rectangle2D bounds = screen.getBounds();
-
-		double stageCenterX = bounds.getMinX() + bounds.getWidth() / 2;
-		double stageCenterY = bounds.getMinY() + bounds.getHeight() / 2;
-
-		dialog.widthProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				dialog.setX(stageCenterX - dialog.getWidth() / 2);
-			}
-		});
-		dialog.heightProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				dialog.setY(stageCenterY - dialog.getHeight() / 2);
-			}
-		});
-	}
-
 }

@@ -6,8 +6,6 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.imageio.ImageIO;
-
 import org.apache.commons.io.*;
 import org.controlsfx.dialog.ExceptionDialog;
 import org.slf4j.*;
@@ -50,6 +48,8 @@ public class MainWindow extends BorderPane {
 	private TextField projectTitleBox;
 	@FXML
 	private Tab styleTab;
+	@FXML
+	private TextField imageHeightField;
 
 	private Stage stage;
 	private Project project = new Project();
@@ -213,6 +213,25 @@ public class MainWindow extends BorderPane {
 			}
 		});
 
+		imageHeightField.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (!newValue.matches("\\d*")) {
+					imageHeightField.setText(newValue.replaceAll("[^\\d]", ""));
+				} else if (newValue.isEmpty()) {
+					imageHeightField.setText("0");
+				} else {
+					int value = Integer.valueOf(newValue);
+					if (value > 8096) {
+						value = Math.min(value, 8096);
+						imageHeightField.setText(Integer.toString(value));
+					} else {
+						project.getSettings().setMaxImageHeight(value);
+					}
+				}
+			}
+		});
+
 		editor = new StyleEditor();
 		styleTab.setContent(editor);
 
@@ -265,8 +284,6 @@ public class MainWindow extends BorderPane {
 		alert.setTitle("Are you sure?");
 		alert.setHeaderText("Are you sure?");
 		alert.setContentText("There may be unsaved changed. Are you sure you want to continue?");
-		Application.positionDialog((Dialog<?>) alert);
-
 		alert.getButtonTypes().setAll(continu, saveFirst, ButtonType.CANCEL);
 
 		Optional<ButtonType> result = alert.showAndWait();
@@ -285,38 +302,28 @@ public class MainWindow extends BorderPane {
 
 	@FXML
 	void exportImage() {
-		FileChooser fileChooser = new FileChooser();
+		DirectoryChooser directoryChooser = new DirectoryChooser();
 		try {
 			if (Application.preferences.get("lastDir", null) != null
 					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
-				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
+				directoryChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
 		} catch (Exception e) {
 			logger.warn("Coulnd't access preferences", e);
 		}
-		fileChooser.setTitle("Export image");
-		fileChooser.getExtensionFilters().addAll(
-				new ExtensionFilter("PNG image", "*.png"),
-				new ExtensionFilter("All files", "*"));
+		directoryChooser.setTitle("Image export folder");
 
-		File selected = fileChooser.showSaveDialog(stage);
+		File selected = directoryChooser.showDialog(stage);
 		if (selected != null) {
-			String ending = FilenameUtils.getExtension(selected.toString());
-			if (!ending.equals("png")) {
-				showError("File must end in .png");
-				return;
-			}
 			try {
 				Application.preferences.put("lastDir", selected.toPath().getParent().toAbsolutePath().toString());
 
-				this.setDisable(true);
-				HtmlImageExporter.convert(project.getTemplate().render(project), img -> {
-					try {
-						ImageIO.write(img.toBufferedImage(), ending, selected);
-					} catch (Exception e) {
-						showError("Error while exporting", e);
-					} finally {
-						this.setDisable(false);
+				setDisable(true);
+				String prefix = project.getTitle();
+				HtmlImageExporter.convert(project, selected.toPath(), prefix, error -> {
+					if (error != null) {
+						showError(error);
 					}
+					setDisable(false);
 				});
 			} catch (Exception e) {
 				showError("Error while exporting", e);
@@ -432,6 +439,7 @@ public class MainWindow extends BorderPane {
 		selectedOption = null;
 		selectedSection = null;
 		projectTitleBox.setText(project.getTitle());
+		imageHeightField.setText(Integer.toString(project.getSettings().getMaxImageHeight()));
 	}
 
 	@FXML
@@ -551,7 +559,6 @@ public class MainWindow extends BorderPane {
 		a.setTitle("Are you sure?");
 		a.setHeaderText("Are you sure?");
 		a.setContentText("Are you sure you want to delete the selected sections?");
-		Application.positionDialog((Dialog<?>) a);
 		Optional<ButtonType> result = a.showAndWait();
 		if (result.get() != ButtonType.YES)
 			return;
@@ -613,7 +620,6 @@ public class MainWindow extends BorderPane {
 		a.setTitle("Are you sure?");
 		a.setHeaderText("Are you sure?");
 		a.setContentText("Are you sure you want to delete this option?");
-		Application.positionDialog((Dialog<?>) a);
 		Optional<ButtonType> result = a.showAndWait();
 		if (result.get() != ButtonType.YES)
 			return;
@@ -667,8 +673,8 @@ public class MainWindow extends BorderPane {
 		logger.error(message);
 
 		Alert a = new Alert(AlertType.ERROR);
+		a.setTitle("Error");
 		a.setContentText(message);
-		Application.positionDialog(a);
 		a.show();
 	}
 
@@ -676,7 +682,8 @@ public class MainWindow extends BorderPane {
 		logger.error(message, ex);
 
 		ExceptionDialog exceptionDialog = new ExceptionDialog(ex);
-		Application.positionDialog((Dialog<?>) exceptionDialog);
+		exceptionDialog.setTitle("Error");
+		exceptionDialog.setHeaderText(message);
 		exceptionDialog.show();
 	}
 

@@ -23,7 +23,11 @@ public class Template {
 	}
 
 	public String render(Project project) {
-		Map<String, Object> data = ProjectConverter.convert(project);
+		return render(project, true, 0, project.getSections().size());
+	}
+
+	public String render(Project project, boolean includeTitle, int start, int end) {
+		Map<String, Object> data = ProjectConverter.convert(project, includeTitle, start, end);
 		Map<String, Object> styleData = ProjectConverter.convertStyle(project.getStyleOptions());
 
 		String style = renderTemplateFromString(styleSource, styleData);
