@@ -650,19 +650,6 @@ public class MainWindow extends BorderPane {
 	private void updatePreview() {
 		String website = project.getTemplate().render(project);
 		preview.getEngine().loadContent(website);
-
-		saveTemp(website);
-	}
-
-	public static void saveTemp(String website) {
-		// TODO remove
-		try {
-			File tempFile = File.createTempFile("rendered_site", ".html");
-			FileUtils.writeStringToFile(tempFile, website, Charset.forName("UTF-8"));
-			System.out.println(tempFile.getAbsolutePath());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void updateStyleEditor() {
