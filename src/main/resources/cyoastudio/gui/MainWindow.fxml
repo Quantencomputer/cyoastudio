@@ -148,39 +148,31 @@
           </Tab>
           <Tab closable="false" text="Project settings">
                <content>
-                  <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
-                    <tabs>
-                      <Tab text="General">
-                        <content>
-                              <ScrollPane fitToWidth="true" vbarPolicy="ALWAYS">
-                                 <content>
-                                    <GridPane alignment="CENTER" hgap="8.0" vgap="8.0">
-                                      <columnConstraints>
-                                        <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="10.0" />
-                                        <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="300.0" />
-                                      </columnConstraints>
-                                      <rowConstraints>
-                                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                      </rowConstraints>
-                                       <children>
-                                          <Label text="Project title:" />
-                                          <TextField fx:id="projectTitleBox" GridPane.columnIndex="1" />
-                                          <Label text="Maximum image height:" GridPane.rowIndex="1" />
-                                          <TextField fx:id="imageHeightField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                       </children>
-                                       <padding>
-                                          <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                                       </padding>
-                                    </GridPane>
-                                 </content>
-                              </ScrollPane>
-                        </content>
-                      </Tab>
-                      <Tab fx:id="styleTab" text="Style" />
-                    </tabs>
-                  </TabPane>
+                  <ScrollPane fitToWidth="true" vbarPolicy="ALWAYS">
+                     <content>
+                        <GridPane alignment="CENTER" hgap="8.0" vgap="8.0">
+                          <columnConstraints>
+                            <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="10.0" />
+                            <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="300.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Project title:" />
+                              <TextField fx:id="projectTitleBox" GridPane.columnIndex="1" />
+                              <Label text="Maximum image height:" GridPane.rowIndex="1" />
+                              <TextField fx:id="imageHeightField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                           </children>
+                           <padding>
+                              <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                           </padding>
+                        </GridPane>
+                     </content>
+                  </ScrollPane>
                </content></Tab>
+          <Tab fx:id="styleTab" text="Style" />
             <Tab fx:id="previewTab" closable="false" text="Preview">
                <content>
                   <WebView fx:id="preview" prefHeight="200.0" prefWidth="200.0" />
