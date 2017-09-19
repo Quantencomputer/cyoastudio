@@ -6,14 +6,16 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
+import javax.imageio.ImageIO;
+
+import org.apache.commons.io.*;
 import org.controlsfx.dialog.ExceptionDialog;
 import org.slf4j.*;
 import org.zeroturnaround.zip.ZipUtil;
 
 import cyoastudio.Application;
 import cyoastudio.data.*;
-import cyoastudio.io.ProjectSerializer;
+import cyoastudio.io.*;
 import cyoastudio.templating.*;
 import javafx.beans.value.*;
 import javafx.collections.*;
@@ -283,7 +285,43 @@ public class MainWindow extends BorderPane {
 
 	@FXML
 	void exportImage() {
-		// TODO
+		FileChooser fileChooser = new FileChooser();
+		try {
+			if (Application.preferences.get("lastDir", null) != null
+					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
+				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
+		} catch (Exception e) {
+			logger.warn("Coulnd't access preferences", e);
+		}
+		fileChooser.setTitle("Export image");
+		fileChooser.getExtensionFilters().addAll(
+				new ExtensionFilter("PNG image", "*.png"),
+				new ExtensionFilter("All files", "*"));
+
+		File selected = fileChooser.showSaveDialog(stage);
+		if (selected != null) {
+			String ending = FilenameUtils.getExtension(selected.toString());
+			if (!ending.equals("png")) {
+				showError("File must end in .png");
+				return;
+			}
+			try {
+				Application.preferences.put("lastDir", selected.toPath().getParent().toAbsolutePath().toString());
+
+				this.setDisable(true);
+				HtmlImageExporter.convert(project.getTemplate().render(project), img -> {
+					try {
+						ImageIO.write(img.toBufferedImage(), ending, selected);
+					} catch (Exception e) {
+						showError("Error while exporting", e);
+					} finally {
+						this.setDisable(false);
+					}
+				});
+			} catch (Exception e) {
+				showError("Error while exporting", e);
+			}
+		}
 	}
 
 	@FXML
@@ -309,6 +347,41 @@ public class MainWindow extends BorderPane {
 				FileUtils.writeStringToFile(selected, text, Charset.forName("UTF-8"));
 			} catch (Exception e) {
 				showError("Error while exporting", e);
+			}
+		}
+	}
+
+	@FXML
+	void importJson() {
+		if (!isUserSure("Import project")) {
+			return;
+		}
+
+		FileChooser fileChooser = new FileChooser();
+		try {
+			if (Application.preferences.get("lastDir", null) != null
+					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
+				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
+		} catch (Exception e) {
+			logger.warn("Coulnd't access preferences", e);
+		}
+		fileChooser.setTitle("Import project");
+		fileChooser.getExtensionFilters().addAll(
+				new ExtensionFilter("JSON file", "*.json"),
+				new ExtensionFilter("All files", "*"));
+		File selected = fileChooser.showOpenDialog(stage);
+		if (selected != null) {
+			try {
+				Application.preferences.put("lastDir", selected.toPath().getParent().toAbsolutePath().toString());
+
+				FileReader reader = new FileReader(selected);
+				project = ProjectSerializer.fromReader(reader);
+				reader.close();
+
+				saveLocation = selected.toPath();
+				cleanUp();
+			} catch (IOException e) {
+				showError("Couldn't import file", e);
 			}
 		}
 	}
@@ -588,6 +661,15 @@ public class MainWindow extends BorderPane {
 
 	private void updateStyleEditor() {
 		editor.editStyle(project);
+	}
+
+	private void showError(String message) {
+		logger.error(message);
+
+		Alert a = new Alert(AlertType.ERROR);
+		a.setContentText(message);
+		Application.positionDialog(a);
+		a.show();
 	}
 
 	private void showError(String message, Exception ex) {

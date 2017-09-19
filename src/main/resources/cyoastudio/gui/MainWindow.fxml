@@ -46,19 +46,27 @@
                      </accelerator>
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <Menu mnemonicParsing="false" text="Import from">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#importJson" text="JSON..." />
+                    </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Export as">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#exportImage" text="Image...">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="E" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator></MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#exportHTML" text="HTML..." />
+                        <MenuItem mnemonicParsing="false" onAction="#exportJson" text="JSON..." />
+                    </items>
+                  </Menu>
                   <Menu mnemonicParsing="false" text="Import template">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#templateFromFile" text="From file..." />
                         <MenuItem mnemonicParsing="false" onAction="#templateFromCss" text="From CSS file..." />
                         <MenuItem mnemonicParsing="false" onAction="#templateFromFolder" text="From folder..." />
                         <MenuItem mnemonicParsing="false" onAction="#defaultTemplate" text="Restore default template" />
-                    </items>
-                  </Menu>
-                  <Menu mnemonicParsing="false" text="Export as">
-                    <items>
-                      <MenuItem mnemonicParsing="false" onAction="#exportImage" text="Image..." />
-                        <MenuItem mnemonicParsing="false" onAction="#exportHTML" text="HTML..." />
-                        <MenuItem mnemonicParsing="false" onAction="#exportJson" text="JSON..." />
                     </items>
                   </Menu>
                   <SeparatorMenuItem mnemonicParsing="false" />

@@ -49,6 +49,7 @@ public class Application extends javafx.application.Application {
 		return version;
 	}
 
+	// TODO remove
 	public static void positionDialog(Dialog<?> dialog) {
 		Point awtMousePosition = MouseInfo.getPointerInfo().getLocation();
 		Point2D mousePosition = new Point2D(awtMousePosition.getX(), awtMousePosition.getY());

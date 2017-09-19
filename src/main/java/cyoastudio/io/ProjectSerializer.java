@@ -28,6 +28,11 @@ public class ProjectSerializer {
 
 	public static byte[] toBytes(Project project) throws IOException {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		toStream(project, stream);
+		return stream.toByteArray();
+	}
+
+	public static void toStream(Project project, OutputStream stream) throws IOException {
 		Writer writer = new OutputStreamWriter(stream);
 
 		ExportPackage p = new ExportPackage();
@@ -35,14 +40,14 @@ public class ProjectSerializer {
 		p.version = Application.getVersion().toString();
 		gson.toJson(p, writer);
 		writer.close();
-		return stream.toByteArray();
 	}
 
 	public static Project fromBytes(byte[] bytes) throws IOException {
-		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(Image.class, new ImageAdapter());
-		Gson gson = builder.create();
-		Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes));
+		InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(bytes));
+		return fromReader(reader);
+	}
+
+	public static Project fromReader(Reader reader) throws IOException {
 		ExportPackage p = gson.fromJson(reader, ExportPackage.class);
 		reader.close();
 
