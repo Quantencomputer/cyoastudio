@@ -9,9 +9,10 @@ CYOA Studio doesn't offer the full possibilities of the image editing programs t
 
 ## Features
 
-* **Automatic layouting:** You only have to enter the content of your CYOA, CYOA Studio takes care of all the layouting.
+* **Layouting:** You only have to enter the content of your CYOA; Get the layout and page splitting for free.
 * **Templating:** You can change the look of your CYOA at any time with a few clicks.
-* **Customizability:** Through font, image and color costumization even CYOAs using the same templates can look unique.
+* **Customizability:** Through font, image and color customization even CYOAs using the same templates can look unique.
+* **Image handling:** You can drag that perfect image straight from your browser into the program and crop it so it fits in.
 
 ![Image showing the same project in multiple styles](img/Diversity.png)
 
