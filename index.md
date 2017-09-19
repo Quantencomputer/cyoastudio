@@ -15,4 +15,15 @@ CYOA Studio doesn't offer the full possibilities of the image editing programs t
 
 ![Image showing the same project in multiple styles](img/Diversity.png)
 
-## Downloads
+## Get it
+
+You need at least [Java 8](https://java.com/en/) to run this program. As long as you have that installed, head over to the [releases page](https://github.com/Quantencomputer/cyoastudio/releases) and get the latest version.
+
+There is a short [manual](manual.md) available.
+
+## Templates
+
+Here are two templates you can use so your project doesn't look so bland. Note that they might use fonts you don't have.
+
+* [Quantum](templates/quantum.cyoatemplate)
+* [Playful](templates/playful.cyoatemplate)
