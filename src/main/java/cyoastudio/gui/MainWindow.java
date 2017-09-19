@@ -6,7 +6,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.*;
 import org.controlsfx.dialog.ExceptionDialog;
 import org.slf4j.*;
 import org.zeroturnaround.zip.ZipUtil;
@@ -19,7 +19,7 @@ import javafx.application.HostServices;
 import javafx.beans.value.*;
 import javafx.collections.*;
 import javafx.fxml.*;
-import javafx.scene.Scene;
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
@@ -59,7 +59,6 @@ public class MainWindow extends BorderPane {
 	private Section selectedSection;
 	private Option selectedOption;
 	private StyleEditor editor;
-	private HostServices hostServices;
 
 	// TODO remove this hack and make dirty not global
 	public static void touch() {
@@ -800,7 +799,7 @@ public class MainWindow extends BorderPane {
 		updateStyleEditor();
 		touch();
 	}
-	
+
 	@FXML
 	void openHelp() {
 		WebView webView = new WebView();
@@ -809,10 +808,22 @@ public class MainWindow extends BorderPane {
 		webView.getEngine().load("https://quantencomputer.github.io/cyoastudio/manual.html");
 		stage.show();
 	}
-	
+
 	@FXML
 	void about() {
-		
+		try {
+			Parent about = FXMLLoader.load(getClass().getResource("About.fxml"));
+
+			((Label) about.lookup("#versionLabel")).setText(Application.getVersion().toString());
+			((TextArea) about.lookup("#licenseArea")).setText(
+					IOUtils.toString(getClass().getResourceAsStream("/cyoastudio/LICENSE"), Charset.forName("UTF-8")));
+
+			Stage stage = new Stage();
+			stage.setScene(new Scene(about));
+			stage.show();
+		} catch (IOException e) {
+			showError("Error", e);
+		}
 	}
 
 }
