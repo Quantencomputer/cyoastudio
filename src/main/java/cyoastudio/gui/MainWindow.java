@@ -6,7 +6,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.*;
+import org.apache.commons.io.FileUtils;
 import org.controlsfx.dialog.ExceptionDialog;
 import org.slf4j.*;
 import org.zeroturnaround.zip.ZipUtil;
@@ -15,6 +15,7 @@ import cyoastudio.Application;
 import cyoastudio.data.*;
 import cyoastudio.io.*;
 import cyoastudio.templating.*;
+import javafx.application.HostServices;
 import javafx.beans.value.*;
 import javafx.collections.*;
 import javafx.fxml.*;
@@ -58,6 +59,7 @@ public class MainWindow extends BorderPane {
 	private Section selectedSection;
 	private Option selectedOption;
 	private StyleEditor editor;
+	private HostServices hostServices;
 
 	// TODO remove this hack and make dirty not global
 	public static void touch() {
@@ -797,6 +799,20 @@ public class MainWindow extends BorderPane {
 		updatePreview();
 		updateStyleEditor();
 		touch();
+	}
+	
+	@FXML
+	void openHelp() {
+		WebView webView = new WebView();
+		Stage stage = new Stage();
+		stage.setScene(new Scene(webView));
+		webView.getEngine().load("https://quantencomputer.github.io/cyoastudio/manual.html");
+		stage.show();
+	}
+	
+	@FXML
+	void about() {
+		
 	}
 
 }

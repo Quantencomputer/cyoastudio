@@ -86,6 +86,12 @@
                   <MenuItem mnemonicParsing="false" onAction="#sortOptions" text="Sort options alphabetically" />
               </items>
             </Menu>
+            <Menu mnemonicParsing="false" text="Help">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#openHelp" text="Open help" />
+                  <MenuItem mnemonicParsing="false" onAction="#about" text="About" />
+              </items>
+            </Menu>
         </menus>
       </MenuBar>
    </top>
