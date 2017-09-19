@@ -222,8 +222,8 @@ public class MainWindow extends BorderPane {
 					imageHeightField.setText("0");
 				} else {
 					int value = Integer.valueOf(newValue);
-					if (value > 8096) {
-						value = Math.min(value, 8096);
+					if (value > 999999) {
+						value = 999999;
 						imageHeightField.setText(Integer.toString(value));
 					} else {
 						project.getSettings().setMaxImageHeight(value);

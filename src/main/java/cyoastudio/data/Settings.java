@@ -1,7 +1,7 @@
 package cyoastudio.data;
 
 public class Settings {
-	private int maxImageHeight = 8096;
+	private int maxImageHeight = 8000;
 
 	public int getMaxImageHeight() {
 		return maxImageHeight;
