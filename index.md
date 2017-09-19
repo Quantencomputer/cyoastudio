@@ -1,7 +1,5 @@
 # CYOA Studio
 
-![Sample image](img/Sample.png)
-
 CYOA Studio is a tool for creating simple CYOAs.
 A CYOA is a game in which the player chooses a bunch of options from a given list, usually involving a currency system.
 
