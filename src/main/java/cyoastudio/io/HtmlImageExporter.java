@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 
 import org.slf4j.*;
 
-import cyoastudio.data.*;
+import cyoastudio.data.Project;
 import javafx.animation.PauseTransition;
 import javafx.beans.value.*;
 import javafx.concurrent.Worker;
@@ -26,13 +26,14 @@ import javafx.stage.Stage;
 public class HtmlImageExporter {
 	public static void convert(Project p, Path targetFolder, String prefix, Consumer<String> callback) {
 		if (callback == null) {
-			callback = error -> {};
+			callback = error -> {
+			};
 		}
 		HtmlImageExporter exporter = new HtmlImageExporter(p, targetFolder, prefix, callback);
 		exporter.setHeightLimit(p.getSettings().getMaxImageHeight());
 		exporter.export();
 	}
-	
+
 	final static Logger logger = LoggerFactory.getLogger(HtmlImageExporter.class);
 
 	private Project project;
@@ -74,7 +75,7 @@ public class HtmlImageExporter {
 		stage.setScene(scene);
 		stage.show();
 	}
-	
+
 	private void export() {
 		probe();
 	}
@@ -128,7 +129,7 @@ public class HtmlImageExporter {
 		bar.setProgress((double) end / (double) project.getSections().size());
 		loadSections(() -> {
 			logger.info("Finished loading " + start + ", " + end);
-			if (height > getHeightLimit() ) {
+			if (height > getHeightLimit()) {
 				rollback();
 			} else if (end >= project.getSections().size()) {
 				render();
@@ -152,7 +153,7 @@ public class HtmlImageExporter {
 
 	private void render() {
 		logger.info("Rendering " + start + ", " + end);
-		
+
 		final PauseTransition pt = new PauseTransition();
 		// TODO don't have this depend on time
 		pt.setDuration(new javafx.util.Duration(100));
@@ -167,7 +168,7 @@ public class HtmlImageExporter {
 
 				pageNumber += 1;
 				start = end;
-				
+
 				if (end >= project.getSections().size()) {
 					stage.close();
 					callback.accept(null);

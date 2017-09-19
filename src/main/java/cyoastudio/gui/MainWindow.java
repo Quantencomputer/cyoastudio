@@ -15,7 +15,6 @@ import cyoastudio.Application;
 import cyoastudio.data.*;
 import cyoastudio.io.*;
 import cyoastudio.templating.*;
-import javafx.application.HostServices;
 import javafx.beans.value.*;
 import javafx.collections.*;
 import javafx.fxml.*;
