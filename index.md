@@ -28,3 +28,5 @@ Here are two templates you can use so your project doesn't look so bland. Note t
 
 * [Quantum](templates/quantum.cyoatemplate)
 * [Playful](templates/playful.cyoatemplate)
+
+For template creation, check out the [template creation guide](template_makind.md).
