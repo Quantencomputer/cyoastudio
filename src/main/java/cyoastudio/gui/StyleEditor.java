@@ -23,7 +23,7 @@ public class StyleEditor extends SplitPane {
 	@FXML
 	private WebView preview;
 	@FXML
-	private TextArea costumCssArea;
+	private TextArea customCssArea;
 
 	private Project project;
 
@@ -53,7 +53,7 @@ public class StyleEditor extends SplitPane {
 				return oldFactory.call(item);
 			}
 		});
-		costumCssArea.textProperty().addListener(new ChangeListener<String>() {
+		customCssArea.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				if (newValue != null) {
@@ -123,7 +123,7 @@ public class StyleEditor extends SplitPane {
 			}).collect(Collectors.toList());
 			propertySheet.getItems().addAll(items);
 
-			costumCssArea.setText(project.getCss());
+			customCssArea.setText(project.getCss());
 		}
 	}
 

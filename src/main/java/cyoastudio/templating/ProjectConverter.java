@@ -24,7 +24,7 @@ public class ProjectConverter {
 		if (start <= end && end <= p.getSections().size())
 			data.put("sections", p.getSections().subList(start, end).stream()
 					.map(ProjectConverter::convert).collect(Collectors.toList()));
-		data.put("costumCss", p.getCss());
+		data.put("customCss", p.getCss());
 
 		return data;
 	}
