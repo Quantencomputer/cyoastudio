@@ -55,6 +55,10 @@ If no such file is provided, no options are presented to the user.
 
 This file can contain arbitrary CSS to style the document. The options described in the `style_options.json` file are provided. Use the triple bracket syntax to avoid escaping of control characters.
 
+Sadly, the document is displayed with the slightly outdated version of webkit that JavaFX uses. It supports a lot of modern CSS3 features, but not all of them. CSS grids are not supported, neither are blend modes.
+
+This tool still supports users changing the color of the background image. If a style option ending in `Image` and one with the same name but ending in `ImageColor` exist, additionally to the two values the style sheet can also use a value ending in `ImageBlended`, containing the original image, multiplied with the color. For example, if two options called `backgroundImage` and `backgroundImageColor` exist, `backgroundImageBlended` will contain the background image with the color applied. If you use this option, provide a light, black and white image for best results.
+
 ## Testing
 
 If you put all the files required for the template, you can load it through the `Import template->From folder...` option.
