@@ -27,7 +27,7 @@ This template provides the base structure for the document. The default should w
 The following values are provided to the template:
 
 - `style` contains the content of `style.css.mustache` after it's been templated.
-- `costumCss` contains the custom CSS provided by the user.
+- `customCss` contains the custom CSS provided by the user.
 - `projectTitle`. Can be null if the title is empty.
 - `section` contains a list of all the sections. The sections have the following values:
 	- `sectionTitle`. Can be null if the title is empty.
@@ -37,7 +37,7 @@ The following values are provided to the template:
 		- `description`. Can be null if the description is empty.
 		- `image` contains the image of the option, to be used as the `src` attribute of an `img` tag.
 
-Note that the `title`s and `description`s contains HTML strings, and as such should be included using the non-escaping triple bracket syntax. The same goes for `style` and `costumCss`.
+Note that the `title`s and `description`s contains HTML strings, and as such should be included using the non-escaping triple bracket syntax. The same goes for `style` and `customCss`.
 
 ### `style_options.json`
 
