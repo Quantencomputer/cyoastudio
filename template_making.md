@@ -43,9 +43,9 @@ Note that the `title`s and `description`s contains HTML strings, and as such sho
 
 This JSON file describes the options available to the user. It should contain a simple JSON object. Depending on the name of the fields, different values are assumed:
 
-- `\*Image`: An image. The default value has to be the name of an image file included in the template.
-- `\*Color`: A color. The default value has to be a valid CSS color.
-- `\*Font`: A font-family. The default value has to be the name of the font family.
+- Ends in `Image`: An image. The default value has to be the name of an image file included in the template.
+- Ends in `Color`: A color. The default value has to be a valid CSS color.
+- Ends in `Font`: A font-family. The default value has to be the name of the font family.
 
 In the template, images are provided as strings to be used in an `url()` expression. Colors and fonts are provided as strings to be used in color attributes and `font-family`, respectively.
 
