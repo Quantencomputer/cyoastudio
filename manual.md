@@ -17,11 +17,11 @@ Upon starting the program, you will be greeted by the main editing tab.
 Using the `Project` menu at the top, you can start a new project, open one or save your currently opened project.
 You'll also find several options for project import/export and changing the template.
 
-On the left, you can swtich between three categories:
+On the left, you can switch between three categories:
 
 - The `Content` tab allows you to edit your sections and options.
 - The `Project settings` tab allows you to edit general options for your project (including the title)
-- The `Style` tab allows you to costumize the template your project is using.
+- The `Style` tab allows you to customize the template your project is using.
 - The `Preview` tab allows you to view your project in the form it would look like if exported right now.
 
 ### Content
@@ -32,18 +32,18 @@ The upper one contains the sections of your project, the lower one contains the 
 Upon selecting a section, the area to the right allows you to edit its values:
 
 - `Section name` is the name of the section, as displayed in the editor and used as its title when exporting.
-- `Image positioning` determines how the images of the options are layed out.
+- `Image positioning` determines how the images of the options are laid out.
 - `Options per row` determines how many options are put into a row.
 - `Image aspect ratio` allows you to specify an aspect ratio that all the options in this section should use. This aspect ratio is enforced when trimming images.
 - `Description` is the description as displayed in the document.
-- `Style classes` allows you to set costum CSS classes for costum styling (for advanced use cases).
+- `Style classes` allows you to set custom CSS classes for custom styling (for advanced use cases).
 
 Additionally, selecting a section displays its options in the lower list. Upon selecting an option, the area to the right allows you to edit its values:
 
 - `Option name` is the name of the option, as displayed in the editor and used as its title when exporting.
 - `Image` displays a thumbnail of the image the option uses. Clicking the button allows you to edit the image.
 - `Description` is the description as displayed in the document.
-- `Style classes` allows you to set costum CSS classes for costum styling (for advanced use cases).
+- `Style classes` allows you to set custom CSS classes for custom styling (for advanced use cases).
 
 You can create new sections and options using the corresponding `+` buttons. You can delete selected entries by using the `-` button.
 Using the context menu, you can also duplicate entries. You can also access these actions using the `Edit` menu on top, which also allows you to sort entries alphabetically.
@@ -69,14 +69,14 @@ This tab allows you to edit basic options of the project.
 
 ![Image of the style editor](img/StyleEditor.png)
 
-A template may give you several costumization options, such as changing the background color or font. The exact options are dependent on the template used. 
+A template may give you several customization options, such as changing the background color or font. The exact options are dependent on the template used. 
 
 Notes:
 
-- When clicking on `Costum color` in the color editor, the color selector may appear behind the main window. In that case, drag the main window around to find it.
+- When clicking on `Custom color` in the color editor, the color selector may appear behind the main window. In that case, drag the main window around to find it.
 - For now, only the font family is used when selecting a font.
 
-In the `Costum CSS` field you can enter additional CSS code to format the document. This might prove useful in combination with the costum classes on sections and options.
+In the `Custom CSS` field you can enter additional CSS code to format the document. This might prove useful in combination with the custom classes on sections and options.
 
 ### Preview
 
@@ -90,4 +90,4 @@ When you are content with your content, you can export your project to images us
 
 ## Templates
 
-You can change the look of your document by importing a template using the `Project->Import template` options. You'll most likely want to import a `.cyoatemplate` file using the `From file...` option. Importing a template will reset all your costum style options to the template's default options. Costum classes and costum CSS will be kept however.
+You can change the look of your document by importing a template using the `Project->Import template` options. You'll most likely want to import a `.cyoatemplate` file using the `From file...` option. Importing a template will reset all your custom style options to the template's default options. Custom classes and custom CSS will be kept however.

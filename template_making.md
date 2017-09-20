@@ -12,12 +12,12 @@ You'll need:
 
 A template consists of these files:
 
-- `page.html.mustache` contains the document structure that the sections and options are placed into. If a template doesn't provide its own page file, a deftaul is provided that should work for most templates.
+- `page.html.mustache` contains the document structure that the sections and options are placed into. If a template doesn't provide its own page file, a default is provided that should work for most templates.
 - `style.css.mustache` contains the style sheet. This file is mandatory.
-- `style_option.json` describes the costumization options and their default values.
+- `style_option.json` describes the customization options and their default values.
 - Any number of image files used in the template.
 
-Both the page and style sheet are mustache templates. The page will be provided with the content that should be displayed, and the style sheet with the costumization options the user chooses. The values are accessed by a curly brace syntax like `{{valueName}}`. For more information see the [mustache manual](https://mustache.github.io/mustache.5.html).
+Both the page and style sheet are mustache templates. The page will be provided with the content that should be displayed, and the style sheet with the customization options the user chooses. The values are accessed by a curly brace syntax like `{{valueName}}`. For more information see the [mustache manual](https://mustache.github.io/mustache.5.html).
 
 You can access the default files in the [repository](https://github.com/Quantencomputer/cyoastudio/tree/master/src/main/resources/cyoastudio/templating/defaultTemplate) for reference. Feel free to use them as a basis for your template.
 
@@ -27,7 +27,7 @@ This template provides the base structure for the document. The default should w
 The following values are provided to the template:
 
 - `style` contains the content of `style.css.mustache` after it's been templated.
-- `costumCss` contains the costum CSS provided by the user.
+- `costumCss` contains the custom CSS provided by the user.
 - `projectTitle`. Can be null if the title is empty.
 - `section` contains a list of all the sections. The sections have the following values:
 	- `sectionTitle`. Can be null if the title is empty.
