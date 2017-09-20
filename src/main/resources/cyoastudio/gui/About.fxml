@@ -11,7 +11,7 @@
    <children>
       <HBox maxWidth="1.7976931348623157E308" prefWidth="200.0" spacing="4.0" VBox.vgrow="NEVER">
          <children>
-            <Label text="CYOA Stuidio" />
+            <Label text="CYOA Studio" />
             <Label fx:id="versionLabel" text="VERSION" />
          </children>
          <padding>
