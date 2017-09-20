@@ -28,13 +28,13 @@ The following values are provided to the template:
 
 - `style` contains the content of `style.css.mustache` after it's been templated.
 - `customCss` contains the custom CSS provided by the user.
-- `projectTitle`. Can be null if the title is empty.
+- `title`.
 - `section` contains a list of all the sections. The sections have the following values:
-	- `sectionTitle`. Can be null if the title is empty.
-	- `description`. Can be null if the description is empty.
+	- `title`.
+	- `description`.
 	- `options` contains a list of all the options in the section. The sections have the following values:
-		- `optionTitle`. Can be null if the title is empty.
-		- `description`. Can be null if the description is empty.
+		- `title`.
+		- `description`.
 		- `image` contains the image of the option, to be used as the `src` attribute of an `img` tag.
 
 Note that the `title`s and `description`s contains HTML strings, and as such should be included using the non-escaping triple bracket syntax. The same goes for `style` and `customCss`.
