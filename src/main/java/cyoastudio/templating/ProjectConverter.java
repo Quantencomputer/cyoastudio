@@ -19,8 +19,8 @@ public class ProjectConverter {
 	public static Map<String, Object> convert(Project p, boolean includeTitle, int start, int end) {
 		Map<String, Object> data = new HashMap<>();
 
-		if (includeTitle && !p.getTitle().isEmpty())
-			data.put("projectTitle", p.getTitle());
+		if (includeTitle)
+			data.put("title", p.getTitle());
 		if (start <= end && end <= p.getSections().size())
 			data.put("sections", p.getSections().subList(start, end).stream()
 					.map(ProjectConverter::convert).collect(Collectors.toList()));
@@ -32,10 +32,8 @@ public class ProjectConverter {
 	public static Map<String, Object> convert(Section s) {
 		Map<String, Object> data = new HashMap<String, Object>();
 
-		if (!s.getTitle().isEmpty())
-			data.put("sectionTitle", Markdown.render(s.getTitle()));
-		if (!s.getDescription().isEmpty())
-			data.put("description", Markdown.render(s.getDescription()));
+		data.put("title", Markdown.render(s.getTitle()));
+		data.put("description", Markdown.render(s.getDescription()));
 		data.put("classes", s.getClasses().concat(" "));
 		data.put("options", s.getOptions().stream()
 				.map(ProjectConverter::convert).collect(Collectors.toList()));
@@ -62,10 +60,8 @@ public class ProjectConverter {
 	public static Map<String, Object> convert(Option o) {
 		Map<String, Object> data = new HashMap<String, Object>();
 
-		if (!o.getTitle().isEmpty())
-			data.put("optionTitle", Markdown.render(o.getTitle()));
-		if (!o.getDescription().isEmpty())
-			data.put("description", Markdown.render(o.getDescription()));
+		data.put("title", Markdown.render(o.getTitle()));
+		data.put("description", Markdown.render(o.getDescription()));
 		if (o.getImage() != null)
 			data.put("image", convert(o.getImage()));
 		data.put("classes", o.getClasses().concat(" "));

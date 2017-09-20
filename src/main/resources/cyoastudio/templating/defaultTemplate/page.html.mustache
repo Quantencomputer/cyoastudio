@@ -11,19 +11,17 @@
 	</style>
 </head>
 <body>
-	{{#projectTitle}}
-	<h1>{{{projectTitle}}}</h1>
-	{{/projectTitle}}
+	{{#title}}
+	<h1>{{{title}}}</h1>
+	{{/title}}
 	{{#sections}}
 	<section class="{{{classes}}}">
-		{{#sectionTitle}}
-		<h2>{{{sectionTitle}}}</h2>
-		{{/sectionTitle}}
+		{{#title}}
+		<h2>{{{title}}}</h2>
+		{{/title}}
 		{{#description}}
-		<div class="description-wrapper text">
-			<div class="description">
-				{{{description}}}
-			</div>
+		<div class="section-description description">
+			{{{description}}}
 		</div>
 		{{/description}}
 		<div class="options {{imageClass}} row{{numPerRow}}">
@@ -32,11 +30,11 @@
 				{{#image}}
 				<img src="{{image}}"/>
 				{{/image}}
-				{{#optionTitle}}
-				<h3>{{{optionTitle}}}</h3>
-				{{/optionTitle}}
+				{{#title}}
+				<h3>{{{title}}}</h3>
+				{{/title}}
 				{{#description}}
-				<div class="description">
+				<div class="option-description description">
 					{{{description}}}
 				</div>
 				{{/description}}
