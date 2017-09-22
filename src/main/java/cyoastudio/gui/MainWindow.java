@@ -389,7 +389,6 @@ public class MainWindow extends BorderPane {
 				project = ProjectSerializer.fromReader(reader);
 				reader.close();
 
-				saveLocation = selected.toPath();
 				cleanUp();
 			} catch (Exception e) {
 				showError("Couldn't import file", e);
