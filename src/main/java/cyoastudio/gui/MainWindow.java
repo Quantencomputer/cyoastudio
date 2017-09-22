@@ -106,11 +106,13 @@ public class MainWindow extends BorderPane {
 						// Ordering sections
 						Section targetItem = getItem();
 
-						ArrayList<Section> movingOptions = new ArrayList<>(sectionModel.getSelectedItems());
-						sectionObsList.removeAll(movingOptions);
+						ArrayList<Section> movingSections = new ArrayList<>(sectionModel.getSelectedItems());
+						sectionObsList.removeAll(movingSections);
+
+						movingSections.removeIf(s -> s == null);
 
 						int target = sectionObsList.indexOf(targetItem) + 1;
-						sectionObsList.addAll(target, movingOptions);
+						sectionObsList.addAll(target, movingSections);
 
 						touch();
 						return true;
@@ -163,6 +165,8 @@ public class MainWindow extends BorderPane {
 
 						ArrayList<Option> movingOptions = new ArrayList<>(optionModel.getSelectedItems());
 						optionObsList.removeAll(movingOptions);
+
+						movingOptions.removeIf(o -> o == null);
 
 						int target = optionObsList.indexOf(targetItem) + 1;
 						optionObsList.addAll(target, movingOptions);
@@ -387,7 +391,7 @@ public class MainWindow extends BorderPane {
 
 				saveLocation = selected.toPath();
 				cleanUp();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				showError("Couldn't import file", e);
 			}
 		}
@@ -432,12 +436,13 @@ public class MainWindow extends BorderPane {
 	}
 
 	private void cleanUp() {
+		selectedOption = null;
+		selectedSection = null;
 		refreshSectionList();
+		refreshOptionList();
 		updateStyleEditor();
 		updatePreview();
 		dirty = false;
-		selectedOption = null;
-		selectedSection = null;
 		projectTitleBox.setText(project.getTitle());
 		imageHeightField.setText(Integer.toString(project.getSettings().getMaxImageHeight()));
 	}
@@ -466,9 +471,9 @@ public class MainWindow extends BorderPane {
 				Application.preferences.put("lastDir", selected.toPath().getParent().toAbsolutePath().toString());
 				project = ProjectSerializer.readFromZip(selected.toPath());
 				saveLocation = selected.toPath();
-				cleanUp();
 
-			} catch (IOException e) {
+				cleanUp();
+			} catch (Exception e) {
 				showError("Couldn't open file", e);
 			}
 		}
@@ -502,7 +507,7 @@ public class MainWindow extends BorderPane {
 			Files.createFile(saveLocation);
 			ProjectSerializer.writeToZip(project, saveLocation);
 			dirty = false;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			saveLocation = null;
 			showError("Error while saving.", e);
 		}
@@ -534,14 +539,20 @@ public class MainWindow extends BorderPane {
 	@FXML
 	void newSection() {
 		touch();
-		project.getSections().add(new Section());
+		int targetIndex;
+		MultipleSelectionModel<Section> selectionModel = sectionList.getSelectionModel();
+		if (selectionModel.isEmpty()) {
+			targetIndex = sectionObsList.size();
+		} else {
+			targetIndex = selectionModel.getSelectedIndex() + 1;
+		}
+		project.getSections().add(targetIndex, new Section());
 		refreshSectionList();
 
 		// Make the new entry editable
 		sectionList.layout();
-		int i = sectionList.getItems().size() - 1;
-		sectionList.scrollTo(i);
-		sectionList.getSelectionModel().select(i);
+		sectionList.scrollTo(targetIndex);
+		selectionModel.clearAndSelect(targetIndex);
 
 		SectionEditor editor = (SectionEditor) contentPane.getCenter();
 		editor.focusNameField();
@@ -587,16 +598,21 @@ public class MainWindow extends BorderPane {
 	@FXML
 	void newOption() {
 		touch();
+		int targetIndex;
+		MultipleSelectionModel<Option> selectionModel = optionList.getSelectionModel();
+		if (selectionModel.isEmpty()) {
+			targetIndex = sectionObsList.size();
+		} else {
+			targetIndex = selectionModel.getSelectedIndex() + 1;
+		}
 		if (selectedSection != null) {
-			selectedSection.getOptions().add(new Option());
+			selectedSection.getOptions().add(targetIndex, new Option());
 			refreshOptionList();
 
 			// Make the new entry editable
 			optionList.layout();
-			int i = optionList.getItems().size() - 1;
-			optionList.scrollTo(i);
-			optionList.getSelectionModel().select(i);
-			optionList.edit(i);
+			optionList.scrollTo(targetIndex);
+			selectionModel.clearAndSelect(targetIndex);
 
 			OptionEditor editor = (OptionEditor) contentPane.getCenter();
 			editor.focusNameField();
