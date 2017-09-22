@@ -58,6 +58,12 @@ public class ProjectSerializer {
 		if (p.project.getStyleOptions() != null)
 			p.project.setStyle(Style.parseStringMap(p.project.getStyleOptions()));
 
+		// Remove null values, just in case
+		p.project.getSections().removeIf(s -> s == null);
+		for (Section s : p.project.getSections()) {
+			s.getOptions().removeIf(o -> o == null);
+		}
+
 		return p.project;
 	}
 
