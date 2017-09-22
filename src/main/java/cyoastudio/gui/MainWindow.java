@@ -619,7 +619,7 @@ public class MainWindow extends BorderPane {
 		a.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 		a.setTitle("Are you sure?");
 		a.setHeaderText("Are you sure?");
-		a.setContentText("Are you sure you want to delete this option?");
+		a.setContentText("Are you sure you want to delete the selected options?");
 		Optional<ButtonType> result = a.showAndWait();
 		if (result.get() != ButtonType.YES)
 			return;
@@ -686,7 +686,7 @@ public class MainWindow extends BorderPane {
 		}
 		fileChooser.setTitle("Import template");
 		fileChooser.getExtensionFilters().addAll(
-				new ExtensionFilter("CYOA Studio Project", "*.cyoatemplate"),
+				new ExtensionFilter("CYOA Studio Template", "*.cyoatemplate"),
 				new ExtensionFilter("All files", "*"));
 		File selected = fileChooser.showOpenDialog(stage);
 		if (selected != null) {
