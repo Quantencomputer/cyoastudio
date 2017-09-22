@@ -437,11 +437,16 @@ public class MainWindow extends BorderPane {
 	private void cleanUp() {
 		selectedOption = null;
 		selectedSection = null;
+		
 		refreshSectionList();
 		refreshOptionList();
+		
+		contentPane.setCenter(null);
 		updateStyleEditor();
 		updatePreview();
+		
 		dirty = false;
+		
 		projectTitleBox.setText(project.getTitle());
 		imageHeightField.setText(Integer.toString(project.getSettings().getMaxImageHeight()));
 	}
