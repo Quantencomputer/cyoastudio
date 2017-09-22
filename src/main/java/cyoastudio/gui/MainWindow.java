@@ -605,7 +605,7 @@ public class MainWindow extends BorderPane {
 		int targetIndex;
 		MultipleSelectionModel<Option> selectionModel = optionList.getSelectionModel();
 		if (selectionModel.isEmpty()) {
-			targetIndex = sectionObsList.size();
+			targetIndex = optionObsList.size();
 		} else {
 			targetIndex = selectionModel.getSelectedIndex() + 1;
 		}
