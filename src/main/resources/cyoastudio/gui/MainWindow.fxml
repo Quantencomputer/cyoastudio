@@ -82,7 +82,10 @@
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#newOption" text="New option" />
                   <MenuItem mnemonicParsing="false" onAction="#deleteOptions" text="Delete selected options" />
-                  <MenuItem mnemonicParsing="false" onAction="#duplicateOptions" text="Duplicate selected options" />
+                  <MenuItem mnemonicParsing="false" onAction="#duplicateOptions" text="Duplicate selected options">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
                   <MenuItem mnemonicParsing="false" onAction="#sortOptions" text="Sort options alphabetically" />
               </items>
             </Menu>
