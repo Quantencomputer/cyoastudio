@@ -15,7 +15,7 @@
 	<h1>{{{title}}}</h1>
 	{{/title}}
 	{{#sections}}
-	<section class="{{{classes}}}">
+	<section id="{{{id}}}" class="{{{classes}}}">
 		{{#title}}
 		<h2>{{{title}}}</h2>
 		{{/title}}
@@ -26,7 +26,7 @@
 		{{/description}}
 		<div class="options {{imageClass}} row{{numPerRow}}">
 			{{#options}}
-			<div class="option {{{classes}}}">
+			<div id="{{{id}}}" class="option {{{classes}}}">
 				{{#image}}
 				<img src="{{image}}"/>
 				{{/image}}

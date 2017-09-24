@@ -21,9 +21,23 @@ public class ProjectConverter {
 
 		if (includeTitle)
 			data.put("title", p.getTitle());
-		if (start <= end && end <= p.getSections().size())
-			data.put("sections", p.getSections().subList(start, end).stream()
-					.map(ProjectConverter::convert).collect(Collectors.toList()));
+		if (start <= end && end <= p.getSections().size()) {
+			List<Section> sections = p.getSections().subList(start, end);
+			List<Map<String, Object>> dataList = sections.stream()
+					.map(ProjectConverter::convert).collect(Collectors.toList());
+
+			// Add ids to everything
+			for (int i = 0; i < sections.size(); i++) {
+				dataList.get(i).put("id", "section-" + String.valueOf(i));
+				Section s = sections.get(i);
+				for (int j = 0; j < s.getOptions().size(); j++) {
+					List<Map<String, Object>> optionDataList = (List<Map<String, Object>>) dataList.get(i)
+							.get("options");
+					optionDataList.get(j).put("id", "option-" + String.valueOf(i) + "-" + String.valueOf(j));
+				}
+			}
+			data.put("sections", dataList);
+		}
 		data.put("customCss", p.getCss());
 
 		return data;

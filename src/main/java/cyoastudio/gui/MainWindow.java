@@ -17,6 +17,7 @@ import cyoastudio.io.*;
 import cyoastudio.templating.*;
 import javafx.beans.value.*;
 import javafx.collections.*;
+import javafx.concurrent.Worker;
 import javafx.fxml.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -58,6 +59,7 @@ public class MainWindow extends BorderPane {
 	private Section selectedSection;
 	private Option selectedOption;
 	private StyleEditor editor;
+	private String currentElementId = "";
 
 	// TODO remove this hack and make dirty not global
 	public static void touch() {
@@ -236,6 +238,14 @@ public class MainWindow extends BorderPane {
 			}
 		});
 
+		preview.getEngine().getLoadWorker().stateProperty().addListener((ov, oldState, newState) -> {
+			if (newState == Worker.State.SUCCEEDED && !getCurrentElementId().isEmpty()) {
+				System.out.println(getCurrentElementId());
+				preview.getEngine()
+						.executeScript("document.getElementById('" + getCurrentElementId() + "').scrollIntoView();");
+			}
+		});
+
 		editor = new StyleEditor();
 		styleTab.setContent(editor);
 
@@ -244,6 +254,7 @@ public class MainWindow extends BorderPane {
 
 	private void editSection(Section section) {
 		selectedSection = section;
+		currentElementId = "section-" + sectionObsList.indexOf(section);
 
 		refreshOptionList();
 		SectionEditor editor = new SectionEditor(selectedSection);
@@ -255,6 +266,7 @@ public class MainWindow extends BorderPane {
 
 	private void editOption(Option option) {
 		selectedOption = option;
+		currentElementId = "option-" + sectionObsList.indexOf(selectedSection) + "-" + optionObsList.indexOf(option);
 
 		OptionEditor editor = new OptionEditor(selectedOption, selectedSection);
 		editor.setOnNameChange(() -> {
@@ -411,6 +423,7 @@ public class MainWindow extends BorderPane {
 	private void cleanUp() {
 		selectedOption = null;
 		selectedSection = null;
+		currentElementId = "";
 
 		refreshSectionList();
 		refreshOptionList();
@@ -792,4 +805,7 @@ public class MainWindow extends BorderPane {
 		}
 	}
 
+	public String getCurrentElementId() {
+		return currentElementId;
+	}
 }
