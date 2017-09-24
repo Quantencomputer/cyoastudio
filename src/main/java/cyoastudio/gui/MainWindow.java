@@ -251,8 +251,6 @@ public class MainWindow extends BorderPane {
 			sectionList.refresh();
 		});
 		contentPane.setCenter(editor);
-
-		optionList.getSelectionModel().clearSelection();
 	}
 
 	private void editOption(Option option) {
@@ -588,11 +586,11 @@ public class MainWindow extends BorderPane {
 	}
 
 	private void refreshOptionList() {
-		Section cur = selectedSection;
-		if (cur == null) {
+		optionList.getSelectionModel().clearSelection();
+		if (selectedSection == null) {
 			optionList.setItems(FXCollections.emptyObservableList());
 		} else {
-			optionObsList = FXCollections.observableList(cur.getOptions());
+			optionObsList = FXCollections.observableList(selectedSection.getOptions());
 			optionList.setItems(optionObsList);
 		}
 	}
