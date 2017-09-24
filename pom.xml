@@ -50,13 +50,31 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>com.zenjava</groupId>
-				<artifactId>javafx-maven-plugin</artifactId>
-				<version>8.8.3</version>
-				<configuration>
-					<mainClass>cyoastudio.Application</mainClass>
-					<vendor>anonymous</vendor>
-				</configuration>
+				<groupId>com.akathist.maven.plugins.launch4j</groupId>
+				<artifactId>launch4j-maven-plugin</artifactId>
+				<version>1.7.21</version>
+				<executions>
+					<execution>
+						<id>l4j-clui</id>
+						<phase>package</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<headerType>gui</headerType>
+							<outfile>${project.build.directory}/${project.artifactId}-${project.version}.exe</outfile>
+							<jar>${project.build.directory}/${project.artifactId}-${project.version}.jar</jar>
+							<errTitle>CYOA Studio</errTitle>
+							<classPath>
+								<mainClass>com.akathist.encc.Clui</mainClass>
+								<addDependencies>false</addDependencies>
+							</classPath>
+							<jre>
+								<minVersion>1.8.0</minVersion>
+							</jre>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<resources>
