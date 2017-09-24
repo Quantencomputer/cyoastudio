@@ -5,7 +5,7 @@ A CYOA is a game in which the player chooses a bunch of options from a given lis
 
 CYOA Studio doesn't offer the full possibilities of the image editing programs that are usually used for CYOA creation, but takes a lot of work of the creators hands.
 
-If you just want to use the program, check out the [website](https://quantencomputer.github.io/cyoastudio/).
+If you just want to use the program, check out the [releases](https://github.com/Quantencomputer/cyoastudio/releases) to download it, or the [website](https://quantencomputer.github.io/cyoastudio/) for more information and documentation.
 
 ## Compilation
 
