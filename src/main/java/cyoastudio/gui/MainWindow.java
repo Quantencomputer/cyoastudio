@@ -550,8 +550,7 @@ public class MainWindow extends BorderPane {
 	@FXML
 	void duplicateSections() {
 		MultipleSelectionModel<Section> selection = sectionList.getSelectionModel();
-		List<Integer> indices = selection.getSelectedIndices();
-		int targetPosition = indices.get(indices.size() - 1);
+		int targetPosition = selection.getSelectedIndex();
 		List<Section> copies = selection.getSelectedItems().parallelStream()
 				.map(s -> ProjectSerializer.deepCopy(s)).collect(Collectors.toList());
 		sectionObsList.addAll(targetPosition + 1, copies);
@@ -618,8 +617,7 @@ public class MainWindow extends BorderPane {
 	@FXML
 	void duplicateOptions() {
 		MultipleSelectionModel<Option> selection = optionList.getSelectionModel();
-		List<Integer> indices = selection.getSelectedIndices();
-		int targetPosition = indices.get(indices.size() - 1);
+		int targetPosition = selection.getSelectedIndex();
 		List<Option> copies = selection.getSelectedItems().parallelStream()
 				.map(o -> ProjectSerializer.deepCopy(o)).collect(Collectors.toList());
 		optionObsList.addAll(targetPosition + 1, copies);
