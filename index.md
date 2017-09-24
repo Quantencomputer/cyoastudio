@@ -20,6 +20,8 @@ CYOA Studio doesn't offer the full possibilities of the image editing programs t
 
 You need at least [Java 8](https://java.com/en/) to run this program. As long as you have that installed, head over to the [releases page](https://github.com/Quantencomputer/cyoastudio/releases) and download the latest version.
 
+There is an `.exe` file available for Windows user, and a `.jar` file for all other operating systems.
+
 There is a short [manual](manual.md) available.
 
 ## Templates
