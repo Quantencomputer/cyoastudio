@@ -35,8 +35,19 @@ public class ProjectConverter {
 		data.put("title", Markdown.render(s.getTitle()));
 		data.put("description", Markdown.render(s.getDescription()));
 		data.put("classes", s.getClasses().concat(" "));
-		data.put("options", s.getOptions().stream()
-				.map(ProjectConverter::convert).collect(Collectors.toList()));
+
+		List<Map<String, Object>> optionDataList = new ArrayList<>();
+		int lowerRollBound = 1;
+		for (Option o : s.getOptions()) {
+			Map<String, Object> optionData = ProjectConverter.convert(o);
+			if (s.isRollable() && o.getRollRange() > 0) {
+				int higherRollBound = lowerRollBound + o.getRollRange() - 1;
+				optionData.put("rollRange", convertRange(lowerRollBound, higherRollBound));
+				lowerRollBound = higherRollBound + 1;
+			}
+			optionDataList.add(optionData);
+		}
+		data.put("options", optionDataList);
 
 		data.put("numPerRow", s.getOptionsPerRow());
 		switch (s.getImagePositioning()) {
@@ -65,6 +76,7 @@ public class ProjectConverter {
 		if (o.getImage() != null)
 			data.put("image", convert(o.getImage()));
 		data.put("classes", o.getClasses().concat(" "));
+		data.put("cost", o.getCost());
 
 		return data;
 	}
@@ -113,5 +125,16 @@ public class ProjectConverter {
 				Integer.toString((int) (c.getGreen() * 255)) + ", " +
 				Integer.toString((int) (c.getBlue() * 255)) + ", " +
 				Double.toString(c.getOpacity()) + ")";
+	}
+
+	public static String convertRange(int low, int high) {
+		assert low <= high;
+
+		if (low == high)
+			return String.valueOf(low);
+		else if (low == high - 1)
+			return String.valueOf(low) + ", " + String.valueOf(high);
+		else
+			return String.valueOf(low) + "-" + String.valueOf(high);
 	}
 }

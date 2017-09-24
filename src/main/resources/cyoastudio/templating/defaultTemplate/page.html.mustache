@@ -32,9 +32,15 @@
 				{{/image}}
 				{{#title}}
 				<h3>{{{title}}}</h3>
+				{{#rollRange}}
+				<div class="roll">{{{rollRange}}}</div>
+				{{/rollRange}}
 				{{/title}}
 				{{#description}}
 				<div class="option-description description">
+					{{#cost}}
+					<p class="cost">Cost: {{{cost}}}</span>
+					{{/cost}}
 					{{{description}}}
 				</div>
 				{{/description}}

@@ -14,6 +14,7 @@ public class Section {
 	private int optionsPerRow = 3;
 	private int aspectX = 0, aspectY = 0;
 	private String classes = "";
+	private boolean rollable = false;
 
 	public String getTitle() {
 		return title;
@@ -90,5 +91,13 @@ public class Section {
 	@Override
 	public String toString() {
 		return "Section " + (title == null ? "null" : title);
+	}
+
+	public boolean isRollable() {
+		return rollable;
+	}
+
+	public void setRollable(boolean rollable) {
+		this.rollable = rollable;
 	}
 }

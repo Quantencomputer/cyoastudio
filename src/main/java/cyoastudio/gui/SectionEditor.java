@@ -19,6 +19,8 @@ public class SectionEditor extends GridPane {
 	@FXML
 	private ChoiceBox<ImagePositioning> positioningBox;
 	@FXML
+	private CheckBox rollBox;
+	@FXML
 	private Slider optionsPerRowSlider;
 	@FXML
 	private TextField aspectXField;
@@ -106,6 +108,16 @@ public class SectionEditor extends GridPane {
 				@Override
 				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 					section.setOptionsPerRow(newValue.intValue());
+					MainWindow.touch();
+				}
+			});
+
+			rollBox.setSelected(section.isRollable());
+			rollBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+				@Override
+				public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+					section.setRollable(newValue);
+					MainWindow.touch();
 				}
 			});
 

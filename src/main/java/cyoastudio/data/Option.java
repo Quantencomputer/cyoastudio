@@ -5,6 +5,8 @@ public class Option {
 	private String description = "";
 	private Image image = null;
 	private String classes = "";
+	private String cost = "";
+	private int rollRange = 1;
 
 	public String getTitle() {
 		return title;
@@ -41,5 +43,21 @@ public class Option {
 	@Override
 	public String toString() {
 		return "Option " + (title == null ? "null" : title);
+	}
+
+	public String getCost() {
+		return cost;
+	}
+
+	public void setCost(String cost) {
+		this.cost = cost;
+	}
+
+	public int getRollRange() {
+		return rollRange;
+	}
+
+	public void setRollRange(int rollRange) {
+		this.rollRange = rollRange;
 	}
 }
