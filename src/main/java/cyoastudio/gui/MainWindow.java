@@ -11,7 +11,7 @@ import org.controlsfx.dialog.ExceptionDialog;
 import org.slf4j.*;
 import org.zeroturnaround.zip.ZipUtil;
 
-import cyoastudio.Application;
+import cyoastudio.*;
 import cyoastudio.data.*;
 import cyoastudio.io.*;
 import cyoastudio.templating.*;
@@ -307,19 +307,13 @@ public class MainWindow extends BorderPane {
 	@FXML
 	void exportImage() {
 		DirectoryChooser directoryChooser = new DirectoryChooser();
-		try {
-			if (Application.preferences.get("lastDir", null) != null
-					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
-				directoryChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
-		} catch (Exception e) {
-			logger.warn("Coulnd't access preferences", e);
-		}
+		directoryChooser.setInitialDirectory(Preferences.getPath("lastDir").toFile());
 		directoryChooser.setTitle("Image export folder");
 
 		File selected = directoryChooser.showDialog(stage);
 		if (selected != null) {
 			try {
-				Application.preferences.put("lastDir", selected.toPath().getParent().toAbsolutePath().toString());
+				Preferences.setPath("lastDir", selected.toPath());
 
 				setDisable(true);
 				String prefix = project.getTitle();
@@ -338,13 +332,7 @@ public class MainWindow extends BorderPane {
 	@FXML
 	void exportHTML() {
 		FileChooser fileChooser = new FileChooser();
-		try {
-			if (Application.preferences.get("lastDir", null) != null
-					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
-				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
-		} catch (Exception e) {
-			logger.warn("Coulnd't access preferences", e);
-		}
+		fileChooser.setInitialDirectory(Preferences.getPath("lastDir").toFile());
 		fileChooser.setTitle("Export HTML");
 		fileChooser.getExtensionFilters().addAll(
 				new ExtensionFilter("HTML files", "*.html", ".htm"),
@@ -352,7 +340,7 @@ public class MainWindow extends BorderPane {
 		File selected = fileChooser.showSaveDialog(stage);
 		if (selected != null) {
 			try {
-				Application.preferences.put("lastDir", selected.toPath().getParent().toAbsolutePath().toString());
+				Preferences.setPath("lastDir", selected.toPath().getParent());
 				String text = project.getTemplate().render(project);
 
 				FileUtils.writeStringToFile(selected, text, Charset.forName("UTF-8"));
@@ -369,13 +357,7 @@ public class MainWindow extends BorderPane {
 		}
 
 		FileChooser fileChooser = new FileChooser();
-		try {
-			if (Application.preferences.get("lastDir", null) != null
-					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
-				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
-		} catch (Exception e) {
-			logger.warn("Coulnd't access preferences", e);
-		}
+		fileChooser.setInitialDirectory(Preferences.getPath("lastDir").toFile());
 		fileChooser.setTitle("Import project");
 		fileChooser.getExtensionFilters().addAll(
 				new ExtensionFilter("JSON file", "*.json"),
@@ -383,7 +365,7 @@ public class MainWindow extends BorderPane {
 		File selected = fileChooser.showOpenDialog(stage);
 		if (selected != null) {
 			try {
-				Application.preferences.put("lastDir", selected.toPath().getParent().toAbsolutePath().toString());
+				Preferences.setPath("lastDir", selected.toPath().getParent());
 
 				FileReader reader = new FileReader(selected);
 				project = ProjectSerializer.fromReader(reader);
@@ -399,13 +381,7 @@ public class MainWindow extends BorderPane {
 	@FXML
 	void exportJson() {
 		FileChooser fileChooser = new FileChooser();
-		try {
-			if (Application.preferences.get("lastDir", null) != null
-					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
-				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
-		} catch (Exception e) {
-			logger.warn("Coulnd't access preferences", e);
-		}
+		fileChooser.setInitialDirectory(Preferences.getPath("lastDir").toFile());
 		fileChooser.setTitle("Export plain text");
 		fileChooser.getExtensionFilters().addAll(
 				new ExtensionFilter("JSON files", "*.json"),
@@ -413,9 +389,9 @@ public class MainWindow extends BorderPane {
 		File selected = fileChooser.showSaveDialog(stage);
 		if (selected != null) {
 			try {
-				Application.preferences.put("lastDir", selected.toPath().getParent().toAbsolutePath().toString());
-				byte[] jsonData = ProjectSerializer.toBytes(project);
+				Preferences.setPath("lastDir", selected.toPath().getParent());
 
+				byte[] jsonData = ProjectSerializer.toBytes(project);
 				FileUtils.writeByteArrayToFile(selected, jsonData);
 			} catch (Exception e) {
 				showError("Error while exporting", e);
@@ -437,16 +413,16 @@ public class MainWindow extends BorderPane {
 	private void cleanUp() {
 		selectedOption = null;
 		selectedSection = null;
-		
+
 		refreshSectionList();
 		refreshOptionList();
-		
+
 		contentPane.setCenter(null);
 		updateStyleEditor();
 		updatePreview();
-		
+
 		dirty = false;
-		
+
 		projectTitleBox.setText(project.getTitle());
 		imageHeightField.setText(Integer.toString(project.getSettings().getMaxImageHeight()));
 	}
@@ -458,13 +434,7 @@ public class MainWindow extends BorderPane {
 		}
 
 		FileChooser fileChooser = new FileChooser();
-		try {
-			if (Application.preferences.get("lastDir", null) != null
-					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
-				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
-		} catch (Exception e) {
-			logger.warn("Coulnd't access preferences", e);
-		}
+		fileChooser.setInitialDirectory(Preferences.getPath("lastDir").toFile());
 		fileChooser.setTitle("Open project");
 		fileChooser.getExtensionFilters().addAll(
 				new ExtensionFilter("CYOA Studio Project", "*.cyoa"),
@@ -472,7 +442,8 @@ public class MainWindow extends BorderPane {
 		File selected = fileChooser.showOpenDialog(stage);
 		if (selected != null) {
 			try {
-				Application.preferences.put("lastDir", selected.toPath().getParent().toAbsolutePath().toString());
+				Preferences.setPath("lastDir", selected.toPath().getParent());
+
 				project = ProjectSerializer.readFromZip(selected.toPath());
 				saveLocation = selected.toPath();
 
@@ -506,7 +477,6 @@ public class MainWindow extends BorderPane {
 	private void save() {
 		assert saveLocation != null;
 		try {
-			Application.preferences.put("lastDir", saveLocation.getParent().toAbsolutePath().toString());
 			Files.deleteIfExists(saveLocation);
 			Files.createFile(saveLocation);
 			ProjectSerializer.writeToZip(project, saveLocation);
@@ -519,13 +489,7 @@ public class MainWindow extends BorderPane {
 
 	private boolean selectSaveLocation() {
 		FileChooser fileChooser = new FileChooser();
-		try {
-			if (Application.preferences.get("lastDir", null) != null
-					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
-				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
-		} catch (Exception e) {
-			logger.warn("Coulnd't access preferences", e);
-		}
+		fileChooser.setInitialDirectory(Preferences.getPath("lastDir").toFile());
 		fileChooser.setTitle("Save");
 		fileChooser.getExtensionFilters().addAll(
 				new ExtensionFilter("CYOA Studio Project", "*.cyoa"),
@@ -534,7 +498,8 @@ public class MainWindow extends BorderPane {
 		if (selected == null) {
 			return false;
 		} else {
-			Application.preferences.put("lastDir", selected.toPath().getParent().toAbsolutePath().toString());
+			Preferences.setPath("lastDir", selected.toPath().getParent());
+
 			saveLocation = selected.toPath();
 			return true;
 		}
@@ -697,13 +662,7 @@ public class MainWindow extends BorderPane {
 	@FXML
 	void templateFromFile() {
 		FileChooser fileChooser = new FileChooser();
-		try {
-			if (Application.preferences.get("lastDir", null) != null
-					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
-				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
-		} catch (Exception e) {
-			logger.warn("Coulnd't access preferences", e);
-		}
+		fileChooser.setInitialDirectory(Preferences.getPath("lastTemplateDir").toFile());
 		fileChooser.setTitle("Import template");
 		fileChooser.getExtensionFilters().addAll(
 				new ExtensionFilter("CYOA Studio Template", "*.cyoatemplate"),
@@ -711,7 +670,8 @@ public class MainWindow extends BorderPane {
 		File selected = fileChooser.showOpenDialog(stage);
 		if (selected != null) {
 			try {
-				Application.preferences.put("lastDir", selected.toPath().getParent().toAbsolutePath().toString());
+				Preferences.setPath("lastTemplateDir", selected.toPath().getParent());
+
 				Path tempDirectory = Files.createTempDirectory(null);
 				ZipUtil.unpack(selected, tempDirectory.toFile());
 
@@ -727,18 +687,13 @@ public class MainWindow extends BorderPane {
 	@FXML
 	void templateFromFolder() {
 		DirectoryChooser directoryChooser = new DirectoryChooser();
-		try {
-			if (Application.preferences.get("lastDir", null) != null
-					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
-				directoryChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
-		} catch (Exception e) {
-			logger.warn("Coulnd't access preferences", e);
-		}
+		directoryChooser.setInitialDirectory(Preferences.getPath("lastTemplateImportDir").toFile());
 		directoryChooser.setTitle("Import template");
 		File selected = directoryChooser.showDialog(stage);
 		if (selected != null) {
 			try {
-				Application.preferences.put("lastDir", selected.toPath().toAbsolutePath().toString());
+				Preferences.setPath("lastTemplateImportDir", selected.toPath());
+
 				loadTemplate(selected.toPath());
 			} catch (Exception e) {
 				showError("Could not load template", e);
@@ -782,13 +737,7 @@ public class MainWindow extends BorderPane {
 	@FXML
 	void templateFromCss() {
 		FileChooser fileChooser = new FileChooser();
-		try {
-			if (Application.preferences.get("lastDir", null) != null
-					&& Files.isDirectory(Paths.get(Application.preferences.get("lastDir", null))))
-				fileChooser.setInitialDirectory(Paths.get(Application.preferences.get("lastDir", "")).toFile());
-		} catch (Exception e) {
-			logger.warn("Coulnd't access preferences", e);
-		}
+		fileChooser.setInitialDirectory(Preferences.getPath("lastTemplateImportDir").toFile());
 		fileChooser.setTitle("Import template");
 		fileChooser.getExtensionFilters().addAll(
 				new ExtensionFilter("CSS files", "*.css"),
@@ -796,6 +745,8 @@ public class MainWindow extends BorderPane {
 		File selected = fileChooser.showOpenDialog(stage);
 		if (selected != null) {
 			try {
+				Preferences.setPath("lastTemplateImportDir", selected.toPath().getParent());
+
 				String pageSource = Template.defaultPageSource();
 				String styleSource = FileUtils.readFileToString(selected, Charset.forName("UTF-8"));
 				Map<String, Object> styleSettings = new HashMap<>();
