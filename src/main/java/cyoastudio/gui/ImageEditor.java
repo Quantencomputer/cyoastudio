@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.controlsfx.control.SnapshotView;
 import org.slf4j.*;
 
+import cyoastudio.Preferences;
 import cyoastudio.data.Image;
 import javafx.application.Platform;
 import javafx.fxml.*;
@@ -65,11 +66,14 @@ public class ImageEditor extends BorderPane {
 	@FXML
 	void loadImage() {
 		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(Preferences.getPath("lastImageDir").toFile());
 		fileChooser.setTitle("Open image");
 		fileChooser.getExtensionFilters().addAll(
 				new ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.bmp", "*.gif"));
 		File selected = fileChooser.showOpenDialog(getScene().getWindow());
 		if (selected != null) {
+			Preferences.setPath("lastImageDir", selected.toPath());
+			
 			loadImage(selected);
 		}
 	}
