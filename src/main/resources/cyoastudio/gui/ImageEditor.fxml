@@ -23,7 +23,8 @@
    <bottom>
       <HBox alignment="TOP_RIGHT" prefWidth="200.0" spacing="8.0" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" onAction="#loadImage" text="Load image..." />
+            <Button layoutX="140.0" layoutY="18.0" mnemonicParsing="false" onAction="#saveImage" text="Export image..." />
+            <Button mnemonicParsing="false" onAction="#loadImage" text="Import image..." />
             <Button layoutX="346.0" layoutY="18.0" mnemonicParsing="false" onAction="#clear" text="Clear image" />
             <Button layoutX="356.0" layoutY="18.0" mnemonicParsing="false" onAction="#trim" text="Trim image" />
             <Button mnemonicParsing="false" onAction="#confirm" text="Confirm" />

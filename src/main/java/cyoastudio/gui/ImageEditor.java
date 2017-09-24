@@ -6,8 +6,11 @@ import java.nio.file.*;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.io.FileUtils;
 import org.controlsfx.control.SnapshotView;
+import org.controlsfx.dialog.ExceptionDialog;
 import org.slf4j.*;
 
 import cyoastudio.Preferences;
@@ -16,6 +19,8 @@ import javafx.application.Platform;
 import javafx.fxml.*;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
@@ -64,6 +69,36 @@ public class ImageEditor extends BorderPane {
 	}
 
 	@FXML
+	void saveImage() {
+		if (image == null) {
+			Alert a = new Alert(AlertType.ERROR);
+			a.setContentText("No image to export!");
+			a.show();
+		}
+
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(Preferences.getPath("lastImageDir").toFile());
+		fileChooser.setTitle("Save image");
+		fileChooser.getExtensionFilters().addAll(
+				new ExtensionFilter("PNG Images", "*.png"));
+		File selected = fileChooser.showSaveDialog(getScene().getWindow());
+		if (selected != null) {
+			Preferences.setPath("lastImageDir", selected.toPath());
+
+			try {
+				ImageIO.write(image.toBufferedImage(), "png", selected);
+			} catch (IOException e) {
+				logger.error("Error while saving the image.", e);
+
+				ExceptionDialog exceptionDialog = new ExceptionDialog(e);
+				exceptionDialog.setTitle("Error");
+				exceptionDialog.setHeaderText("Error while saving the image.");
+				exceptionDialog.show();
+			}
+		}
+	}
+
+	@FXML
 	void loadImage() {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(Preferences.getPath("lastImageDir").toFile());
@@ -73,7 +108,7 @@ public class ImageEditor extends BorderPane {
 		File selected = fileChooser.showOpenDialog(getScene().getWindow());
 		if (selected != null) {
 			Preferences.setPath("lastImageDir", selected.toPath());
-			
+
 			loadImage(selected);
 		}
 	}
