@@ -33,6 +33,7 @@ Upon selecting a section, the area to the right allows you to edit its values:
 
 - `Section name` is the name of the section, as displayed in the editor and used as its title when exporting.
 - `Image positioning` determines how the images of the options are laid out.
+- `Enable rolling` sets whether or not the sections should display RYOA values.
 - `Options per row` determines how many options are put into a row.
 - `Image aspect ratio` allows you to specify an aspect ratio that all the options in this section should use. This aspect ratio is enforced when trimming images.
 - `Description` is the description as displayed in the document.
@@ -41,6 +42,8 @@ Upon selecting a section, the area to the right allows you to edit its values:
 Additionally, selecting a section displays its options in the lower list. Upon selecting an option, the area to the right allows you to edit its values:
 
 - `Option name` is the name of the option, as displayed in the editor and used as its title when exporting.
+- `Cost` is the cost of the option.
+- `Roll range` determines, how many rolls should lead to this choice, if the section has rolling enabled. You only need to enter the number of options, the actual numbers that need to be rolled are calculated automatically. (E.g. entering "4" in this field means the actual rolls could be "8-11", depending on the options before.)
 - `Image` displays a thumbnail of the image the option uses. Clicking the button allows you to edit the image.
 - `Description` is the description as displayed in the document.
 - `Style classes` allows you to set custom CSS classes for custom styling (for advanced use cases).

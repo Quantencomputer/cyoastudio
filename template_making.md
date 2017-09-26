@@ -30,14 +30,20 @@ The following values are provided to the template:
 - `customCss` contains the custom CSS provided by the user.
 - `title`.
 - `section` contains a list of all the sections. The sections have the following values:
+	- `id` contains an automatically generated id, which is used to jump to the section. It should be used in an id field of the first element that represents this section.
 	- `title`.
 	- `description`.
 	- `options` contains a list of all the options in the section. The sections have the following values:
+		- `id` contains an automatically generated id, just like the one for sections.
 		- `title`.
+		- `cost`.
+		- `rollRange`.
 		- `description`.
 		- `image` contains the image of the option, to be used as the `src` attribute of an `img` tag.
 
 Note that the `title`s and `description`s contains HTML strings, and as such should be included using the non-escaping triple bracket syntax. The same goes for `style` and `customCss`.
+
+All fields of options and sections can be empty. The corresponding parts in the document should not be displayed when these values are empty.
 
 ### `style_options.json`
 
