@@ -240,7 +240,6 @@ public class MainWindow extends BorderPane {
 
 		preview.getEngine().getLoadWorker().stateProperty().addListener((ov, oldState, newState) -> {
 			if (newState == Worker.State.SUCCEEDED && !getCurrentElementId().isEmpty()) {
-				System.out.println(getCurrentElementId());
 				preview.getEngine()
 						.executeScript("document.getElementById('" + getCurrentElementId() + "').scrollIntoView();");
 			}
