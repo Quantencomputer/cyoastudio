@@ -94,3 +94,8 @@ When you are content with your content, you can export your project to images us
 ## Templates
 
 You can change the look of your document by importing a template using the `Project->Import template` options. You'll most likely want to import a `.cyoatemplate` file using the `From file...` option. Importing a template will reset all your custom style options to the template's default options. Custom classes and custom CSS will be kept however.
+
+## Troubleshooting
+
+**My exported images are completely or partially blank!**  
+Try increasing the "Render delay" option in the setting window (found in the `Edit` menu). How high you need to go depends on your machine as well as the complexity of the projects you're trying to export.
