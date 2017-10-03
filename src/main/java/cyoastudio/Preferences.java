@@ -6,7 +6,7 @@ import org.slf4j.*;
 
 public class Preferences {
 	private static final Logger logger = LoggerFactory.getLogger(Preferences.class);
-	private static final java.util.prefs.Preferences preferences = java.util.prefs.Preferences
+	public static final java.util.prefs.Preferences preferences = java.util.prefs.Preferences
 			.userNodeForPackage(Application.class);
 
 	public static Path getPath(String key) {

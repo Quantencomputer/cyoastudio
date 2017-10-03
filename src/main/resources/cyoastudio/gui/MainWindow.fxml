@@ -87,6 +87,8 @@
                         <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
                   <MenuItem mnemonicParsing="false" onAction="#sortOptions" text="Sort options alphabetically" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#showOptions" text="Settings" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Help">

@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 
 import org.slf4j.*;
 
+import cyoastudio.Preferences;
 import cyoastudio.data.Project;
 import javafx.animation.PauseTransition;
 import javafx.beans.value.*;
@@ -51,7 +52,6 @@ public class HtmlImageExporter {
 	private int pageNumber = 1;
 	private double height;
 
-	// TODO make configurable
 	private double heightLimit = 8096;
 
 	private ChangeListener<State> listener;
@@ -156,7 +156,8 @@ public class HtmlImageExporter {
 
 		final PauseTransition pt = new PauseTransition();
 		// TODO don't have this depend on time
-		pt.setDuration(new javafx.util.Duration(100));
+		int renderDelay = Preferences.preferences.getInt("renderDelay", 100);
+		pt.setDuration(new javafx.util.Duration(renderDelay));
 		pt.setOnFinished(ev -> {
 			try {
 				WritableImage image = browser.snapshot(null, null);

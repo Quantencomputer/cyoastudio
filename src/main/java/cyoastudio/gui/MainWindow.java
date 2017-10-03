@@ -807,4 +807,9 @@ public class MainWindow extends BorderPane {
 	public String getCurrentElementId() {
 		return currentElementId;
 	}
+
+	@FXML
+	void showOptions() {
+		new OptionsWindow();
+	}
 }
