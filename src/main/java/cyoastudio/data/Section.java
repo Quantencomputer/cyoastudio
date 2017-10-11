@@ -76,7 +76,7 @@ public class Section {
 		if (aspectY == 0) {
 			return 0;
 		} else {
-			return aspectX / aspectY;
+			return ((double) aspectX) / ((double) aspectY);
 		}
 	}
 
