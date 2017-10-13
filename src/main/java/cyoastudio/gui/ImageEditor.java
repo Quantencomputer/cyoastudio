@@ -107,7 +107,7 @@ public class ImageEditor extends BorderPane {
 				new ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.bmp", "*.gif"));
 		File selected = fileChooser.showOpenDialog(getScene().getWindow());
 		if (selected != null) {
-			Preferences.setPath("lastImageDir", selected.toPath());
+			Preferences.setPath("lastImageDir", selected.toPath().getParent());
 
 			loadImage(selected);
 		}
