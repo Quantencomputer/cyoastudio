@@ -792,7 +792,7 @@ public class MainWindow extends BorderPane {
 		try {
 			Parent about = FXMLLoader.load(getClass().getResource("About.fxml"));
 
-			((Label) about.lookup("#versionLabel")).setText(Application.getVersion().toString());
+			((TextArea) about.lookup("#infoArea")).setText(Application.getRuntimeDetails());
 			((TextArea) about.lookup("#licenseArea")).setText(
 					IOUtils.toString(getClass().getResourceAsStream("/cyoastudio/LICENSE"), Charset.forName("UTF-8")));
 
