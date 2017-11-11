@@ -9,7 +9,8 @@ import javax.imageio.ImageIO;
 import org.slf4j.*;
 
 import cyoastudio.Preferences;
-import cyoastudio.data.Project;
+import cyoastudio.data.*;
+import cyoastudio.templating.ProjectConverter.Bounds;
 import javafx.animation.PauseTransition;
 import javafx.beans.value.*;
 import javafx.concurrent.Worker;
@@ -47,8 +48,9 @@ public class HtmlImageExporter {
 	private String prefix;
 	private Path targetFoler;
 
-	private int start = 0;
-	private int end = 0;
+	private Bounds bounds = new Bounds(0, 0);
+	private int curSubdivisions = 1;
+	private int curSubdivision = 0;
 	private int pageNumber = 1;
 	private double height;
 
@@ -81,9 +83,9 @@ public class HtmlImageExporter {
 	}
 
 	private void loadSections(Runnable nextCall) {
-		logger.info("Loading " + start + ", " + end);
-		boolean includeTitle = (start == 0);
-		String source = project.getTemplate().render(project, includeTitle, start, end);
+		logger.info("Loading " + bounds.toString());
+		boolean includeTitle = (bounds.lowerSection == 0 && bounds.lowerOption == 0);
+		String source = project.getTemplate().render(project, includeTitle, bounds);
 
 		WebEngine engine = browser.getEngine();
 		engine.loadContent(source);
@@ -123,15 +125,15 @@ public class HtmlImageExporter {
 	}
 
 	private void probe() {
-		end += 1;
+		bounds.upperSection += 1;
 
-		logger.info("Probing " + start + ", " + end);
-		bar.setProgress((double) end / (double) project.getSections().size());
+		logger.info("Probing " + bounds.toString());
+		bar.setProgress((double) bounds.lowerSection / (double) project.getSections().size());
 		loadSections(() -> {
-			logger.info("Finished loading " + start + ", " + end);
+			logger.info("Finished loading " + bounds.toString());
 			if (height > getHeightLimit()) {
 				rollback();
-			} else if (end >= project.getSections().size()) {
+			} else if (bounds.upperSection >= project.getSections().size() - 1) {
 				render();
 			} else {
 				probe();
@@ -139,20 +141,39 @@ public class HtmlImageExporter {
 		});
 	}
 
-	private void rollback() {
-		end -= 1;
-		if (start == end) {
-			String error = "Section \"" + project.getSections().get(start).getTitle() + "\" too long to fit on a page";
-			logger.error(error);
-			stage.close();
-			callback.accept(error);
+	private Bounds subdivide(int sectionNumber, int subdivisions, int currentPart) {
+		Section s = project.getSections().get(sectionNumber);
+		final int optionsPerRow = s.getOptionsPerRow();
+		final int rows = (s.getOptions().size() - 1) / optionsPerRow + 1;
+		if (subdivisions > rows) {
+			return null;
+		}
+
+		final int rowsPerSubdivision = (rows - 1) / subdivisions + 1;
+		final int optionsPerSubdivision = rowsPerSubdivision * optionsPerRow;
+		final int lowerOption = optionsPerSubdivision * currentPart;
+		final int upperOption = lowerOption + optionsPerSubdivision;
+
+		if (currentPart >= subdivisions - 1) {
+			return new Bounds(sectionNumber, sectionNumber, lowerOption, Integer.MAX_VALUE);
 		} else {
-			loadSections(HtmlImageExporter.this::render);
+			return new Bounds(sectionNumber, sectionNumber, lowerOption, upperOption);
+		}
+	}
+
+	private void rollback() {
+		logger.info("Too big, rolling back");
+		bounds.upperSection -= 1;
+		if (bounds.upperSection < bounds.lowerSection) {
+			logger.info("Subdividing section");
+			probeSubdivided();
+		} else {
+			loadSections(this::render);
 		}
 	}
 
 	private void render() {
-		logger.info("Rendering " + start + ", " + end);
+		logger.info("Rendering " + bounds.toString() + ", page " + pageNumber);
 
 		final PauseTransition pt = new PauseTransition();
 		// TODO don't have this depend on time
@@ -168,13 +189,86 @@ public class HtmlImageExporter {
 				ImageIO.write(bufferedImage, "png", target.toFile());
 
 				pageNumber += 1;
-				start = end;
+				bounds.lowerSection = bounds.upperSection + 1;
 
-				if (end >= project.getSections().size()) {
+				if (bounds.upperSection >= project.getSections().size() - 1) {
 					stage.close();
 					callback.accept(null);
 				} else {
 					probe();
+				}
+			} catch (Exception e) {
+				logger.error("Error while taking screenshot", e);
+				stage.close();
+				callback.accept("Error while taking screenshot");
+			}
+		});
+		pt.play();
+	}
+
+	private void probeSubdivided() {
+		curSubdivisions += 1;
+
+		logger.info("Probing " + bounds.toString() + ", currently on division " + curSubdivision);
+		bar.setProgress((double) bounds.lowerSection / (double) project.getSections().size());
+
+		bounds = subdivide(bounds.lowerSection, curSubdivisions, curSubdivision);
+		if (bounds == null) {
+			String error = "Could not split section up";
+			logger.error(error);
+			stage.close();
+			callback.accept(error);
+		} else {
+			loadSections(() -> {
+				logger.info("Finished loading " + bounds.toString());
+				if (height > getHeightLimit()) {
+					probeSubdivided();
+				} else {
+					renderSubdivided();
+				}
+			});
+		}
+	}
+
+	private void renderSubdivided() {
+		logger.info("Rendering " + bounds.toString() + ", page " + pageNumber);
+
+		final PauseTransition pt = new PauseTransition();
+		// TODO don't have this depend on time
+		int renderDelay = Preferences.preferences.getInt("renderDelay", 100);
+		pt.setDuration(new javafx.util.Duration(renderDelay));
+		pt.setOnFinished(ev -> {
+			try {
+				WritableImage image = browser.snapshot(null, null);
+				BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+
+				String filename = prefix + Integer.toString(pageNumber) + ".png";
+				Path target = targetFoler.resolve(filename);
+				ImageIO.write(bufferedImage, "png", target.toFile());
+
+				pageNumber += 1;
+
+				if (bounds.upperOption == Integer.MAX_VALUE) {
+					bounds = new Bounds(bounds.lowerSection + 1, bounds.lowerSection + 1);
+					if (bounds.upperSection >= project.getSections().size() - 1) {
+						stage.close();
+						callback.accept(null);
+					} else {
+						curSubdivisions = 1;
+						curSubdivision = 0;
+						probe();
+					}
+				} else {
+					curSubdivision += 1;
+					bounds = subdivide(bounds.lowerSection, curSubdivisions, curSubdivision);
+					if (bounds == null) {
+						String error = "Could not split section up";
+						logger.error(error);
+						stage.close();
+						callback.accept(error);
+					} else {
+						loadSections(this::renderSubdivided);
+					}
 				}
 			} catch (Exception e) {
 				logger.error("Error while taking screenshot", e);

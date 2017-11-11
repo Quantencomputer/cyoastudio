@@ -12,27 +12,62 @@ import javafx.scene.text.Font;
 
 public class ProjectConverter {
 
-	public static Map<String, Object> convert(Project p) {
-		return convert(p, true, 0, p.getSections().size());
+	public static class Bounds {
+		public Bounds(int lowerSection, int upperSection, int lowerOption, int upperOption) {
+			super();
+			this.lowerSection = lowerSection;
+			this.lowerOption = lowerOption;
+			this.upperSection = upperSection;
+			this.upperOption = upperOption;
+		}
+
+		public Bounds(int lowerSection, int upperSection) {
+			super();
+			this.lowerSection = lowerSection;
+			this.lowerOption = 0;
+			this.upperSection = upperSection;
+			this.upperOption = Integer.MAX_VALUE;
+		}
+
+		public int lowerSection;
+		public int upperSection;
+		public int lowerOption;
+		public int upperOption;
+
+		@Override
+		public String toString() {
+			return lowerSection + ":" + lowerOption + " - " + upperSection + ":" + upperOption;
+		}
 	}
 
-	public static Map<String, Object> convert(Project p, boolean includeTitle, int start, int end) {
+	public static Map<String, Object> convert(Project p) {
+		return convert(p, true, new Bounds(0, p.getSections().size() - 1));
+	}
+
+	public static Map<String, Object> convert(Project p, boolean includeTitle, Bounds bounds) {
 		Map<String, Object> data = new HashMap<>();
+
+		int start = bounds.lowerSection;
+		int end = bounds.upperSection + 1;
 
 		if (includeTitle)
 			data.put("title", p.getTitle());
 		if (start <= end && end <= p.getSections().size()) {
 			List<Section> sections = p.getSections().subList(start, end);
-			List<Map<String, Object>> dataList = sections.stream()
-					.map(ProjectConverter::convert).collect(Collectors.toList());
+			List<Map<String, Object>> dataList = new ArrayList<>();
+			for (int i = 0; i < sections.size(); i++) {
+				int optionLowerBound = (start + i == bounds.lowerSection) ? bounds.lowerOption : 0;
+				int optionHigherBound = (start + i == bounds.upperSection) ? bounds.upperOption : Integer.MAX_VALUE;
+				dataList.add(convert(sections.get(i), optionLowerBound, optionHigherBound));
+			}
 
 			// Add ids to everything
 			for (int i = 0; i < sections.size(); i++) {
 				dataList.get(i).put("id", "section-" + String.valueOf(i));
 				Section s = sections.get(i);
-				for (int j = 0; j < s.getOptions().size(); j++) {
-					List<Map<String, Object>> optionDataList = (List<Map<String, Object>>) dataList.get(i)
-							.get("options");
+				List<Map<String, Object>> optionDataList = (List<Map<String, Object>>) dataList.get(i)
+						.get("options");
+				for (int j = 0; j < optionDataList.size(); j++) {
 					optionDataList.get(j).put("id", "option-" + String.valueOf(i) + "-" + String.valueOf(j));
 				}
 			}
@@ -43,7 +78,7 @@ public class ProjectConverter {
 		return data;
 	}
 
-	public static Map<String, Object> convert(Section s) {
+	public static Map<String, Object> convert(Section s, int lowerBound, int upperBound) {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		data.put("title", Markdown.render(s.getTitle()));
@@ -52,14 +87,18 @@ public class ProjectConverter {
 
 		List<Map<String, Object>> optionDataList = new ArrayList<>();
 		int lowerRollBound = 1;
-		for (Option o : s.getOptions()) {
+		for (int i = 0; i < s.getOptions().size(); i++) {
+			if (i >= upperBound)
+				break;
+			Option o = s.getOptions().get(i);
 			Map<String, Object> optionData = ProjectConverter.convert(o);
 			if (s.isRollable() && o.getRollRange() > 0) {
 				int higherRollBound = lowerRollBound + o.getRollRange() - 1;
 				optionData.put("rollRange", convertRange(lowerRollBound, higherRollBound));
 				lowerRollBound = higherRollBound + 1;
 			}
-			optionDataList.add(optionData);
+			if (i >= lowerBound)
+				optionDataList.add(optionData);
 		}
 		data.put("options", optionDataList);
 

@@ -10,6 +10,7 @@ import org.slf4j.*;
 import com.github.mustachejava.*;
 
 import cyoastudio.data.Project;
+import cyoastudio.templating.ProjectConverter.Bounds;
 
 public class Template {
 	final static Logger logger = LoggerFactory.getLogger(Template.class);
@@ -23,11 +24,11 @@ public class Template {
 	}
 
 	public String render(Project project) {
-		return render(project, true, 0, project.getSections().size());
+		return render(project, true, new Bounds(0, project.getSections().size() - 1));
 	}
 
-	public String render(Project project, boolean includeTitle, int start, int end) {
-		Map<String, Object> data = ProjectConverter.convert(project, includeTitle, start, end);
+	public String render(Project project, boolean includeTitle, Bounds bounds) {
+		Map<String, Object> data = ProjectConverter.convert(project, includeTitle, bounds);
 		Map<String, Object> styleData = ProjectConverter.convertStyle(project.getStyleOptions());
 
 		String style = renderTemplateFromString(styleSource, styleData);
