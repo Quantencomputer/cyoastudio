@@ -49,12 +49,12 @@ public class Style {
 			return Color.web(data);
 		} else if (fieldName.toLowerCase().endsWith("image")) {
 			if (source == null) {
-				return new Image(data);
+				return Image.fromDataOrStorage(data);
 			} else {
 				try {
-					return new Image(source.resolve(data));
+					return Image.copy(source.resolve(data));
 				} catch (IOException e) {
-					return new Image();
+					return Image.empty();
 				}
 			}
 		} else if (fieldName.toLowerCase().endsWith("font")) {

@@ -14,6 +14,7 @@ import org.zeroturnaround.zip.ZipUtil;
 import cyoastudio.*;
 import cyoastudio.data.*;
 import cyoastudio.io.*;
+import cyoastudio.io.ProjectSerializer.ImageType;
 import cyoastudio.templating.*;
 import javafx.beans.value.*;
 import javafx.collections.*;
@@ -53,7 +54,7 @@ public class MainWindow extends BorderPane {
 	private TextField imageHeightField;
 
 	private Stage stage;
-	private Project project = new Project();
+	private Project project;
 	private Path saveLocation;
 	private static boolean dirty = false;
 	private Section selectedSection;
@@ -89,6 +90,8 @@ public class MainWindow extends BorderPane {
 
 	@FXML
 	void initialize() {
+		project = new Project();
+
 		MultipleSelectionModel<Section> sectionModel = sectionList.getSelectionModel();
 		MultipleSelectionModel<Option> optionModel = optionList.getSelectionModel();
 
@@ -283,6 +286,11 @@ public class MainWindow extends BorderPane {
 		}
 
 		stage.close();
+		try {
+			Application.getDatastorage().close();
+		} catch (IOException e) {
+			showError("Could not clean up working directory", e);
+		}
 	}
 
 	private boolean isUserSure(String action) {
@@ -350,7 +358,7 @@ public class MainWindow extends BorderPane {
 		if (selected != null) {
 			try {
 				Preferences.setPath("lastDir", selected.toPath().getParent());
-				String text = project.getTemplate().render(project);
+				String text = project.getTemplate().render(project, ImageType.BASE64);
 
 				FileUtils.writeStringToFile(selected, text, Charset.forName("UTF-8"));
 			} catch (Exception e) {
@@ -377,14 +385,28 @@ public class MainWindow extends BorderPane {
 				Preferences.setPath("lastDir", selected.toPath().getParent());
 
 				FileReader reader = new FileReader(selected);
-				project = ProjectSerializer.fromReader(reader);
+				flushDataStorage();
+				replaceProject(ProjectSerializer.fromReader(reader, ImageType.BASE64));
 				reader.close();
-
-				cleanUp();
 			} catch (Exception e) {
 				showError("Couldn't import file", e);
 			}
 		}
+	}
+
+	private void flushDataStorage() {
+		try {
+			Application.getDatastorage().flush();
+		} catch (IOException e) {
+			showError("Error while setting up working directory", e);
+			exitProgram();
+		}
+	}
+
+	private void replaceProject(Project newProject) {
+		project = newProject;
+
+		cleanUp();
 	}
 
 	@FXML
@@ -400,7 +422,7 @@ public class MainWindow extends BorderPane {
 			try {
 				Preferences.setPath("lastDir", selected.toPath().getParent());
 
-				byte[] jsonData = ProjectSerializer.toBytes(project);
+				byte[] jsonData = ProjectSerializer.toBytes(project, ImageType.BASE64);
 				FileUtils.writeByteArrayToFile(selected, jsonData);
 			} catch (Exception e) {
 				showError("Error while exporting", e);
@@ -414,8 +436,8 @@ public class MainWindow extends BorderPane {
 			return;
 		}
 
-		project = new Project();
-		cleanUp();
+		flushDataStorage();
+		replaceProject(new Project());
 		saveLocation = null;
 	}
 
@@ -454,10 +476,9 @@ public class MainWindow extends BorderPane {
 			try {
 				Preferences.setPath("lastDir", selected.toPath().getParent());
 
-				project = ProjectSerializer.readFromZip(selected.toPath());
+				flushDataStorage();
+				replaceProject(ProjectSerializer.readFromZip(selected.toPath()));
 				saveLocation = selected.toPath();
-
-				cleanUp();
 			} catch (Exception e) {
 				showError("Couldn't open file", e);
 			}
@@ -641,7 +662,7 @@ public class MainWindow extends BorderPane {
 	}
 
 	private void updatePreview() {
-		String website = project.getTemplate().render(project);
+		String website = project.getTemplate().render(project, ImageType.REFERENCE);
 		preview.getEngine().loadContent(website);
 	}
 

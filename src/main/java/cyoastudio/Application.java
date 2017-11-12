@@ -4,10 +4,12 @@ import java.awt.*;
 import java.io.*;
 import java.util.*;
 
+import org.controlsfx.dialog.ExceptionDialog;
 import org.slf4j.*;
 
 import com.github.zafarkhaja.semver.Version;
 
+import cyoastudio.data.DataStorage;
 import cyoastudio.gui.MainWindow;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -15,6 +17,7 @@ import javafx.stage.Stage;
 public class Application extends javafx.application.Application {
 	private static final Logger logger = LoggerFactory.getLogger(Application.class);
 	private static Version version;
+	private static DataStorage dataStorage;
 
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -23,6 +26,19 @@ public class Application extends javafx.application.Application {
 		Point mousePosition = MouseInfo.getPointerInfo().getLocation();
 		stage.setX(mousePosition.getX());
 		stage.setY(mousePosition.getY());
+
+		try {
+			dataStorage = new DataStorage();
+		} catch (IOException ex) {
+			logger.error("Could not initialize working directory", ex);
+
+			ExceptionDialog exceptionDialog = new ExceptionDialog(ex);
+			exceptionDialog.setTitle("Error");
+			exceptionDialog.setHeaderText("Could not initialize working directory");
+			exceptionDialog.show();
+
+			return;
+		}
 
 		new MainWindow(stage);
 
@@ -62,5 +78,9 @@ public class Application extends javafx.application.Application {
 
 	public static Version getVersion() {
 		return version;
+	}
+
+	public static DataStorage getDatastorage() {
+		return dataStorage;
 	}
 }

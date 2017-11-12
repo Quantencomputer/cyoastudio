@@ -7,7 +7,7 @@ import com.google.gson.stream.*;
 
 import cyoastudio.data.Image;
 
-public class ImageAdapter extends TypeAdapter<Image> {
+public class Base64ImageAdapter extends TypeAdapter<Image> {
 
 	@Override
 	public Image read(JsonReader reader) throws IOException {
@@ -16,7 +16,7 @@ public class ImageAdapter extends TypeAdapter<Image> {
 			return null;
 		}
 
-		return new Image(reader.nextString());
+		return Image.fromData(reader.nextString());
 	}
 
 	@Override

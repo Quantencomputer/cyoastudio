@@ -10,6 +10,7 @@ import org.slf4j.*;
 
 import cyoastudio.Preferences;
 import cyoastudio.data.*;
+import cyoastudio.io.ProjectSerializer.ImageType;
 import cyoastudio.templating.ProjectConverter.Bounds;
 import javafx.animation.PauseTransition;
 import javafx.beans.value.*;
@@ -85,7 +86,7 @@ public class HtmlImageExporter {
 	private void loadSections(Runnable nextCall) {
 		logger.info("Loading " + bounds.toString());
 		boolean includeTitle = (bounds.lowerSection == 0 && bounds.lowerOption == 0);
-		String source = project.getTemplate().render(project, includeTitle, bounds);
+		String source = project.getTemplate().render(project, includeTitle, bounds, ImageType.REFERENCE);
 
 		WebEngine engine = browser.getEngine();
 		engine.loadContent(source);

@@ -2,11 +2,11 @@ package cyoastudio.templating;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import org.slf4j.*;
 
 import cyoastudio.data.*;
+import cyoastudio.io.ProjectSerializer.ImageType;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -40,11 +40,11 @@ public class ProjectConverter {
 		}
 	}
 
-	public static Map<String, Object> convert(Project p) {
-		return convert(p, true, new Bounds(0, p.getSections().size() - 1));
+	public static Map<String, Object> convert(Project p, ImageType imageType) {
+		return convert(p, true, new Bounds(0, p.getSections().size() - 1), imageType);
 	}
 
-	public static Map<String, Object> convert(Project p, boolean includeTitle, Bounds bounds) {
+	public static Map<String, Object> convert(Project p, boolean includeTitle, Bounds bounds, ImageType imageType) {
 		Map<String, Object> data = new HashMap<>();
 
 		int start = bounds.lowerSection;
@@ -58,7 +58,7 @@ public class ProjectConverter {
 			for (int i = 0; i < sections.size(); i++) {
 				int optionLowerBound = (start + i == bounds.lowerSection) ? bounds.lowerOption : 0;
 				int optionHigherBound = (start + i == bounds.upperSection) ? bounds.upperOption : Integer.MAX_VALUE;
-				dataList.add(convert(sections.get(i), optionLowerBound, optionHigherBound));
+				dataList.add(convert(sections.get(i), optionLowerBound, optionHigherBound, imageType));
 			}
 
 			// Add ids to everything
@@ -78,7 +78,7 @@ public class ProjectConverter {
 		return data;
 	}
 
-	public static Map<String, Object> convert(Section s, int lowerBound, int upperBound) {
+	public static Map<String, Object> convert(Section s, int lowerBound, int upperBound, ImageType imageType) {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		data.put("title", Markdown.render(s.getTitle()));
@@ -91,7 +91,7 @@ public class ProjectConverter {
 			if (i >= upperBound)
 				break;
 			Option o = s.getOptions().get(i);
-			Map<String, Object> optionData = ProjectConverter.convert(o);
+			Map<String, Object> optionData = ProjectConverter.convert(o, imageType);
 			if (s.isRollable() && o.getRollRange() > 0) {
 				int higherRollBound = lowerRollBound + o.getRollRange() - 1;
 				optionData.put("rollRange", convertRange(lowerRollBound, higherRollBound));
@@ -121,20 +121,20 @@ public class ProjectConverter {
 		return data;
 	}
 
-	public static Map<String, Object> convert(Option o) {
+	public static Map<String, Object> convert(Option o, ImageType imageType) {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		data.put("title", Markdown.render(o.getTitle()));
 		data.put("description", Markdown.render(o.getDescription()));
 		if (o.getImage() != null)
-			data.put("image", convert(o.getImage()));
+			data.put("image", convert(o.getImage(), imageType));
 		data.put("classes", o.getClasses().concat(" "));
 		data.put("cost", o.getCost());
 
 		return data;
 	}
 
-	public static Map<String, Object> convertStyle(Map<String, Object> style) {
+	public static Map<String, Object> convertStyle(Map<String, Object> style, ImageType imageType) {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		for (Entry<String, Object> i : style.entrySet()) {
@@ -146,9 +146,9 @@ public class ProjectConverter {
 			} else if (value instanceof Image) {
 				if (style.containsKey(key + "Color")) {
 					data.put(key + "Blended",
-							convert(((Image) value).blend((Color) style.get(key + "Color"))));
+							((Image) value).blend((Color) style.get(key + "Color")));
 				}
-				repr = convert((Image) value);
+				repr = convert((Image) value, imageType);
 			} else if (value instanceof String) {
 				repr = (String) value;
 			} else if (value instanceof Font) {
@@ -168,8 +168,11 @@ public class ProjectConverter {
 		return data;
 	}
 
-	public static String convert(Image i) {
-		return "data:image/png;base64," + i.toBase64();
+	public static String convert(Image i, ImageType imageType) {
+		if (imageType == ImageType.BASE64)
+			return i.toBase64();
+		else
+			return i.getURL().toString();
 	}
 
 	public static String convert(Color c) {

@@ -10,6 +10,7 @@ import org.slf4j.*;
 import com.github.mustachejava.*;
 
 import cyoastudio.data.Project;
+import cyoastudio.io.ProjectSerializer.ImageType;
 import cyoastudio.templating.ProjectConverter.Bounds;
 
 public class Template {
@@ -23,13 +24,13 @@ public class Template {
 		this.styleSource = styleSource;
 	}
 
-	public String render(Project project) {
-		return render(project, true, new Bounds(0, project.getSections().size() - 1));
+	public String render(Project project, ImageType imageType) {
+		return render(project, true, new Bounds(0, project.getSections().size() - 1), imageType);
 	}
 
-	public String render(Project project, boolean includeTitle, Bounds bounds) {
-		Map<String, Object> data = ProjectConverter.convert(project, includeTitle, bounds);
-		Map<String, Object> styleData = ProjectConverter.convertStyle(project.getStyleOptions());
+	public String render(Project project, boolean includeTitle, Bounds bounds, ImageType imageType) {
+		Map<String, Object> data = ProjectConverter.convert(project, includeTitle, bounds, imageType);
+		Map<String, Object> styleData = ProjectConverter.convertStyle(project.getStyleOptions(), imageType);
 
 		String style = renderTemplateFromString(styleSource, styleData);
 

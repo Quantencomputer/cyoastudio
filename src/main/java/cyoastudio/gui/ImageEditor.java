@@ -115,25 +115,33 @@ public class ImageEditor extends BorderPane {
 
 	private void loadImage(File source) {
 		try {
-			image = new Image(source.toPath());
+			replaceImage(Image.copy(source.toPath()));
+		} catch (IOException e) {
+			logger.error("Could not load image", e);
+		}
+	}
+
+	private void replaceImage(Image newImage) {
+		try {
+			if (image != null)
+				image.delete();
+			image = newImage;
 			updateImage();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Could not cleanup image image", e);
 		}
 	}
 
 	@FXML
 	void clear() {
-		image = null;
-		updateImage();
+		replaceImage(null);
 	}
 
 	@FXML
 	void trim() {
 		if (image != null && snapshotView.isSelectionActive()) {
 			Rectangle2D area = snapshotView.transformSelectionToNodeCoordinates();
-			image = image.trim(area);
-			updateImage();
+			replaceImage(image.trim(area));
 		}
 	}
 
@@ -153,8 +161,11 @@ public class ImageEditor extends BorderPane {
 		if (db.hasFiles() && db.getFiles().size() == 1) {
 			loadImage(db.getFiles().get(0));
 		} else if (db.hasImage()) {
-			image = new Image(db.getImage());
-			updateImage();
+			try {
+				replaceImage(Image.fromData(db.getImage()));
+			} catch (IOException e) {
+				logger.error("Could not save image", e);
+			}
 		} else if (db.hasString()) {
 			try {
 				this.setDisable(true);
@@ -167,7 +178,7 @@ public class ImageEditor extends BorderPane {
 						FileUtils.copyURLToFile(url, tempFile.toFile());
 						return true;
 					} catch (IOException e) {
-						logger.warn("Error while downloading file", e);
+						logger.error("Error while downloading file", e);
 						return false;
 					}
 				});
@@ -175,10 +186,10 @@ public class ImageEditor extends BorderPane {
 				if (download.get(5, TimeUnit.SECONDS)) {
 					javafx.scene.image.Image fxImage = new javafx.scene.image.Image(
 							tempFile.toUri().toURL().toString());
-					Image img = new Image(fxImage);
+					Image img = Image.fromData(fxImage);
 					Files.delete(tempFile);
 
-					image = img;
+					replaceImage(img);
 					this.setDisable(false);
 					Platform.runLater(ImageEditor.this::updateImage);
 				}
@@ -224,7 +235,7 @@ public class ImageEditor extends BorderPane {
 		Stage stage = new Stage();
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(parent);
-		stage.setScene(new Scene(new ImageEditor(image, onSuccess, ratio)));
+		stage.setScene(new Scene(new ImageEditor(image.copy(), onSuccess, ratio)));
 		stage.show();
 	}
 

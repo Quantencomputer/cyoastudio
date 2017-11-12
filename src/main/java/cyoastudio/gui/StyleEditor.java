@@ -9,6 +9,7 @@ import org.controlsfx.control.PropertySheet.Item;
 import org.controlsfx.property.editor.PropertyEditor;
 
 import cyoastudio.data.*;
+import cyoastudio.io.ProjectSerializer.ImageType;
 import cyoastudio.templating.Template;
 import javafx.animation.*;
 import javafx.beans.value.*;
@@ -142,13 +143,14 @@ public class StyleEditor extends SplitPane {
 			Project previewProject = previewProject();
 			previewProject.setStyle(getStyleOptions());
 			previewProject.setCss(project.getCss());
-			String html = getTemplate().render(previewProject);
+			String html = getTemplate().render(previewProject, ImageType.REFERENCE);
 			preview.getEngine().loadContent(html);
 		}
 	}
 
 	private static Project previewProject() {
-		Project previewProject = new Project();
+		Project previewProject;
+		previewProject = new Project();
 		previewProject.setTitle("Lorem ipsum");
 		Option o = new Option();
 		o.setTitle("Dolor sit");

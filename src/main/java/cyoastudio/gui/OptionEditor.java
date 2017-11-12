@@ -139,6 +139,12 @@ public class OptionEditor extends GridPane {
 				@Override
 				public void handle(ActionEvent event) {
 					ImageEditor.show(getScene().getWindow(), option.getImage(), img -> {
+						try {
+							option.getImage().delete();
+						} catch (IOException e) {
+							// TODO handle more responsibly
+							e.printStackTrace();
+						}
 						option.setImage(img);
 						updateImage();
 					}, section.getAspectRatio());
