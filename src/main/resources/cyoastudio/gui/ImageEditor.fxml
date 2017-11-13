@@ -28,7 +28,7 @@
             <Button mnemonicParsing="false" onAction="#clear" text="Clear image" />
             <Button mnemonicParsing="false" onAction="#trim" text="Trim image" />
             <Button mnemonicParsing="false" onAction="#confirm" text="Confirm" />
-            <Button mnemonicParsing="false" onAction="#close" text="Cancel" />
+            <Button mnemonicParsing="false" onAction="#cancel" text="Cancel" />
          </children>
          <padding>
             <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />

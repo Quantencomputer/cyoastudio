@@ -55,6 +55,17 @@ public class ImageEditor extends BorderPane {
 	}
 
 	@FXML
+	void cancel() {
+		if (image != null) {
+			try {
+				image.delete();
+			} catch (Exception e) {
+				logger.error("Could not cleanup image image", e);
+			}
+		}
+		close();
+	}
+
 	void close() {
 		Stage stage = (Stage) getScene().getWindow();
 		stage.close();
@@ -235,7 +246,11 @@ public class ImageEditor extends BorderPane {
 		Stage stage = new Stage();
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(parent);
-		stage.setScene(new Scene(new ImageEditor(image.copy(), onSuccess, ratio)));
+		Image i = null;
+		if (image != null) {
+			i = image.copy();
+		}
+		stage.setScene(new Scene(new ImageEditor(i, onSuccess, ratio)));
 		stage.show();
 	}
 

@@ -54,7 +54,7 @@ public class Style {
 				try {
 					return Image.copy(source.resolve(data));
 				} catch (IOException e) {
-					return Image.empty();
+					throw new RuntimeException("Error while importing image");
 				}
 			}
 		} else if (fieldName.toLowerCase().endsWith("font")) {

@@ -49,10 +49,6 @@ public class Image {
 		return fromData(ImageIO.read(new ByteArrayInputStream(data)));
 	}
 
-	public static Image empty() throws IOException {
-		return fromData(new BufferedImage(0, 0, BufferedImage.TYPE_INT_RGB));
-	}
-
 	public static Image copy(Path source) throws IOException {
 		String iden = Application.getDatastorage().makeIdentifier();
 		Path path = Application.getDatastorage().getFile(iden);

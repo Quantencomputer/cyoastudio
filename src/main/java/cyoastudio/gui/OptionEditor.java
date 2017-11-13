@@ -140,7 +140,8 @@ public class OptionEditor extends GridPane {
 				public void handle(ActionEvent event) {
 					ImageEditor.show(getScene().getWindow(), option.getImage(), img -> {
 						try {
-							option.getImage().delete();
+							if (option.getImage() != null)
+								option.getImage().delete();
 						} catch (IOException e) {
 							// TODO handle more responsibly
 							e.printStackTrace();

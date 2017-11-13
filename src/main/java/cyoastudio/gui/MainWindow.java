@@ -517,11 +517,11 @@ public class MainWindow extends BorderPane {
 					backupLocation = saveLocation.getParent().resolve(filename + ".backup" + counter + ".cyoa");
 					i++;
 				} while (Files.exists(backupLocation));
-				Files.copy(saveLocation, backupLocation);
+				Files.move(saveLocation, backupLocation);
 			}
-			Files.createFile(saveLocation);
 			ProjectSerializer.writeToZip(project, saveLocation);
 			dirty = false;
+			Files.delete(backupLocation);
 		} catch (Exception e) {
 			saveLocation = null;
 			if (backupLocation != null)

@@ -2,7 +2,7 @@ package cyoastudio.io;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.*;
 
 import org.apache.commons.io.IOUtils;
@@ -115,6 +115,7 @@ public class ProjectSerializer {
 		List<ZipEntrySource> entries = new ArrayList<>();
 		entries.add(new ByteSource(PROJECT_JSON_FILENAME, jsonBytes));
 		entries.add(new ByteSource(PROJECT_VERSION_FILENAME, version));
+
 		for (String iden : usedIdentifiers) {
 			Path path = Application.getDatastorage().getFile(iden);
 			logger.debug("Adding file " + iden + " to archive");
