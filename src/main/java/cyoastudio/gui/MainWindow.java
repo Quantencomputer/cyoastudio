@@ -507,14 +507,28 @@ public class MainWindow extends BorderPane {
 
 	private void save() {
 		assert saveLocation != null;
+		Path backupLocation = null;
 		try {
-			Files.deleteIfExists(saveLocation);
+			if (Files.exists(saveLocation)) {
+				String filename = saveLocation.getFileName().toString();
+				int i = 1;
+				do {
+					String counter = (i == 1) ? "" : Integer.toString(i);
+					backupLocation = saveLocation.getParent().resolve(filename + ".backup" + counter + ".cyoa");
+					i++;
+				} while (Files.exists(backupLocation));
+				Files.copy(saveLocation, backupLocation);
+			}
 			Files.createFile(saveLocation);
 			ProjectSerializer.writeToZip(project, saveLocation);
 			dirty = false;
 		} catch (Exception e) {
 			saveLocation = null;
-			showError("Error while saving.", e);
+			if (backupLocation != null)
+				showError("Error while saving. A backup copy of the old project was created at "
+						+ backupLocation.toString(), e);
+			else
+				showError("Error while saving.", e);
 		}
 	}
 
