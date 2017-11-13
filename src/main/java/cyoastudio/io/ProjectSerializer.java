@@ -32,8 +32,12 @@ public class ProjectSerializer {
 	}
 
 	private static Gson identifierGson() {
+		return identifierGson(null);
+	}
+
+	private static Gson identifierGson(List<String> usedIdentifiers) {
 		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(Image.class, new ImageAdapter());
+		builder.registerTypeAdapter(Image.class, new ImageAdapter(usedIdentifiers));
 		builder.registerTypeAdapter(Color.class, new ColorAdapter());
 		builder.registerTypeAdapter(Font.class, new FontAdapter());
 		return builder.create();
@@ -51,32 +55,33 @@ public class ProjectSerializer {
 		}
 	}
 
-	public static byte[] toBytes(Project project, ImageType imageType) throws IOException {
+	public static byte[] toBytes(Project project, Gson gson) throws IOException {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		toStream(project, stream, imageType);
+		toStream(project, stream, gson);
 		return stream.toByteArray();
 	}
 
-	public static void toStream(Project project, OutputStream stream, ImageType imageType) throws IOException {
+	public static byte[] toBytes(Project project, ImageType imageType) throws IOException {
+		return toBytes(project, buildGson(imageType));
+	}
+
+	public static void toStream(Project project, OutputStream stream, Gson gson) throws IOException {
 		Writer writer = new OutputStreamWriter(stream);
 
 		ExportPackage p = new ExportPackage();
 		p.project = project;
 		p.version = Application.getVersion().toString();
 
-		Gson gson = buildGson(imageType);
 		gson.toJson(p, writer);
 		writer.close();
 	}
 
-	public static Project fromBytes(byte[] bytes, ImageType imageType) throws IOException {
+	public static Project fromBytes(byte[] bytes, Gson gson) throws IOException {
 		InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(bytes));
-		return fromReader(reader, imageType);
+		return fromReader(reader, gson);
 	}
 
-	public static Project fromReader(Reader reader, ImageType imageType) throws IOException {
-		Gson gson = buildGson(imageType);
-
+	public static Project fromReader(Reader reader, Gson gson) throws IOException {
 		ExportPackage p = gson.fromJson(reader, ExportPackage.class);
 		reader.close();
 
@@ -97,15 +102,23 @@ public class ProjectSerializer {
 		return p.project;
 	}
 
+	public static Project fromReader(FileReader reader, ImageType imageType) throws IOException {
+		return fromReader(reader, buildGson(imageType));
+	}
+
 	public static void writeToZip(Project project, Path target) throws IOException {
 		byte[] version = Application.getVersion().toString().getBytes();
+
+		List<String> usedIdentifiers = new ArrayList<>();
+		final byte[] jsonBytes = toBytes(project, identifierGson(usedIdentifiers));
+
 		List<ZipEntrySource> entries = new ArrayList<>();
-		entries.add(new ByteSource(PROJECT_JSON_FILENAME, toBytes(project, ImageType.REFERENCE)));
+		entries.add(new ByteSource(PROJECT_JSON_FILENAME, jsonBytes));
 		entries.add(new ByteSource(PROJECT_VERSION_FILENAME, version));
-		for (Path path : Application.getDatastorage().getFiles()) {
-			String fileName = path.getName(path.getNameCount() - 1).toString();
-			logger.debug("Adding file " + fileName + " to archive");
-			entries.add(new FileSource("data/" + fileName, path.toFile()));
+		for (String iden : usedIdentifiers) {
+			Path path = Application.getDatastorage().getFile(iden);
+			logger.debug("Adding file " + iden + " to archive");
+			entries.add(new FileSource("data/" + iden, path.toFile()));
 		}
 		ZipUtil.pack(entries.toArray(new ZipEntrySource[entries.size()]), target.toFile());
 	}
@@ -129,8 +142,8 @@ public class ProjectSerializer {
 				}
 			});
 		}
-		return fromBytes(ZipUtil.unpackEntry(target.toFile(), PROJECT_JSON_FILENAME),
-				useBase64Images ? ImageType.BASE64 : ImageType.REFERENCE);
+		final Gson gson = buildGson(useBase64Images ? ImageType.BASE64 : ImageType.REFERENCE);
+		return fromBytes(ZipUtil.unpackEntry(target.toFile(), PROJECT_JSON_FILENAME), gson);
 	}
 
 	public static Version readFileVersion(Path target) throws IOException {
