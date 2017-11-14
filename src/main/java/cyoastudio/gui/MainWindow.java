@@ -14,6 +14,7 @@ import org.zeroturnaround.zip.ZipUtil;
 import cyoastudio.*;
 import cyoastudio.data.*;
 import cyoastudio.io.*;
+import cyoastudio.io.HtmlImageExporter.OutputFormat;
 import cyoastudio.io.ProjectSerializer.ImageType;
 import cyoastudio.templating.*;
 import javafx.beans.value.*;
@@ -334,7 +335,7 @@ public class MainWindow extends BorderPane {
 
 				setDisable(true);
 				String prefix = project.getTitle();
-				HtmlImageExporter.convert(project, selected.toPath(), prefix, error -> {
+				HtmlImageExporter.convert(project, selected.toPath(), prefix, OutputFormat.IMAGE, error -> {
 					if (error != null) {
 						showError(error);
 					}
@@ -361,6 +362,31 @@ public class MainWindow extends BorderPane {
 				String text = project.getTemplate().render(project, ImageType.BASE64);
 
 				FileUtils.writeStringToFile(selected, text, Charset.forName("UTF-8"));
+			} catch (Exception e) {
+				showError("Error while exporting", e);
+			}
+		}
+	}
+
+	@FXML
+	void exportSplitHTML() {
+		DirectoryChooser directoryChooser = new DirectoryChooser();
+		directoryChooser.setInitialDirectory(Preferences.getPath("lastDir").toFile());
+		directoryChooser.setTitle("Image export folder");
+
+		File selected = directoryChooser.showDialog(stage);
+		if (selected != null) {
+			try {
+				Preferences.setPath("lastDir", selected.toPath());
+
+				setDisable(true);
+				String prefix = project.getTitle();
+				HtmlImageExporter.convert(project, selected.toPath(), prefix, OutputFormat.HTML, error -> {
+					if (error != null) {
+						showError(error);
+					}
+					setDisable(false);
+				});
 			} catch (Exception e) {
 				showError("Error while exporting", e);
 			}

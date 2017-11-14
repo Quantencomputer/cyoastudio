@@ -84,7 +84,7 @@ public class Image {
 
 	public String toBase64() {
 		try {
-			return Base64.getEncoder().encodeToString(getData());
+			return "data:image/png;base64," + Base64.getEncoder().encodeToString(getData());
 		} catch (IOException e) {
 			throw new RuntimeException("Couldn't convert image to base64", e);
 		}

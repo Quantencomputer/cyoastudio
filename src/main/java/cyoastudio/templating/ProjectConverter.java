@@ -81,8 +81,11 @@ public class ProjectConverter {
 	public static Map<String, Object> convert(Section s, int lowerBound, int upperBound, ImageType imageType) {
 		Map<String, Object> data = new HashMap<String, Object>();
 
-		data.put("title", Markdown.render(s.getTitle()));
-		data.put("description", Markdown.render(s.getDescription()));
+		// Only the first part of each section should have title and description
+		if (lowerBound == 0) {
+			data.put("title", Markdown.render(s.getTitle()));
+			data.put("description", Markdown.render(s.getDescription()));
+		}
 		data.put("classes", s.getClasses().concat(" "));
 
 		List<Map<String, Object>> optionDataList = new ArrayList<>();

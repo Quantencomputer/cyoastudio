@@ -1,11 +1,14 @@
 package cyoastudio.io;
 
 import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.*;
 
 import cyoastudio.Preferences;
@@ -27,14 +30,19 @@ import javafx.scene.web.*;
 import javafx.stage.Stage;
 
 public class HtmlImageExporter {
-	public static void convert(Project p, Path targetFolder, String prefix, Consumer<String> callback) {
+	public static void convert(Project p, Path targetFolder, String prefix, OutputFormat outputFormat,
+			Consumer<String> callback) {
 		if (callback == null) {
 			callback = error -> {
 			};
 		}
-		HtmlImageExporter exporter = new HtmlImageExporter(p, targetFolder, prefix, callback);
+		HtmlImageExporter exporter = new HtmlImageExporter(p, targetFolder, prefix, outputFormat, callback);
 		exporter.setHeightLimit(p.getSettings().getMaxImageHeight());
 		exporter.export();
+	}
+
+	public enum OutputFormat {
+		HTML, IMAGE
 	}
 
 	final static Logger logger = LoggerFactory.getLogger(HtmlImageExporter.class);
@@ -59,11 +67,15 @@ public class HtmlImageExporter {
 
 	private ChangeListener<State> listener;
 
-	private HtmlImageExporter(Project project, Path targetFolder, String prefix, Consumer<String> callback) {
+	private OutputFormat outputFormat;
+
+	private HtmlImageExporter(Project project, Path targetFolder, String prefix, OutputFormat outputFormat,
+			Consumer<String> callback) {
 		this.project = project;
 		this.targetFoler = targetFolder;
 		this.prefix = prefix;
 		this.callback = callback;
+		this.outputFormat = outputFormat;
 
 		stage = new Stage();
 		browser = new WebView();
@@ -109,8 +121,6 @@ public class HtmlImageExporter {
 							.executeScript("window.getComputedStyle(document.body).getPropertyValue('height')")
 							.toString();
 					height = Double.valueOf(heightText.replace("px", ""));
-					browser.setMinHeight(height + 128); // A bit of extra space to avoid scrolling
-					browser.setMaxHeight(browser.getMinHeight());
 					browser.setMinWidth(1280);
 					browser.setMaxWidth(browser.getMinWidth());
 
@@ -176,18 +186,16 @@ public class HtmlImageExporter {
 	private void render() {
 		logger.info("Rendering " + bounds.toString() + ", page " + pageNumber);
 
+		browser.setMinHeight(height + 128); // A bit of extra space to avoid scrolling
+		browser.setMaxHeight(browser.getMinHeight());
+
 		final PauseTransition pt = new PauseTransition();
 		// TODO don't have this depend on time
 		int renderDelay = Preferences.preferences.getInt("renderDelay", 100);
 		pt.setDuration(new javafx.util.Duration(renderDelay));
 		pt.setOnFinished(ev -> {
 			try {
-				WritableImage image = browser.snapshot(null, null);
-				BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-
-				String filename = prefix + Integer.toString(pageNumber) + ".png";
-				Path target = targetFoler.resolve(filename);
-				ImageIO.write(bufferedImage, "png", target.toFile());
+				savePage();
 
 				pageNumber += 1;
 				bounds.lowerSection = bounds.upperSection + 1;
@@ -205,6 +213,25 @@ public class HtmlImageExporter {
 			}
 		});
 		pt.play();
+	}
+
+	private void savePage() throws IOException {
+		if (outputFormat == OutputFormat.HTML) {
+			String source = project.getTemplate().render(project, pageNumber == 1, bounds, ImageType.BASE64);
+
+			String filename = prefix + Integer.toString(pageNumber) + ".html";
+			Path target = targetFoler.resolve(filename);
+			FileOutputStream stream = new FileOutputStream(target.toFile());
+			IOUtils.write(source, stream, Charset.forName("UTF-8"));
+			stream.close();
+		} else {
+			WritableImage image = browser.snapshot(null, null);
+			BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+
+			String filename = prefix + Integer.toString(pageNumber) + ".png";
+			Path target = targetFoler.resolve(filename);
+			ImageIO.write(bufferedImage, "png", target.toFile());
+		}
 	}
 
 	private void probeSubdivided() {
@@ -234,18 +261,16 @@ public class HtmlImageExporter {
 	private void renderSubdivided() {
 		logger.info("Rendering " + bounds.toString() + ", page " + pageNumber);
 
+		browser.setMinHeight(height + 128); // A bit of extra space to avoid scrolling
+		browser.setMaxHeight(browser.getMinHeight());
+
 		final PauseTransition pt = new PauseTransition();
 		// TODO don't have this depend on time
 		int renderDelay = Preferences.preferences.getInt("renderDelay", 100);
 		pt.setDuration(new javafx.util.Duration(renderDelay));
 		pt.setOnFinished(ev -> {
 			try {
-				WritableImage image = browser.snapshot(null, null);
-				BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-
-				String filename = prefix + Integer.toString(pageNumber) + ".png";
-				Path target = targetFoler.resolve(filename);
-				ImageIO.write(bufferedImage, "png", target.toFile());
+				savePage();
 
 				pageNumber += 1;
 
