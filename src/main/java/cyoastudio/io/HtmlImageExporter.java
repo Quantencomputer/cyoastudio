@@ -179,7 +179,12 @@ public class HtmlImageExporter {
 			logger.info("Subdividing section");
 			probeSubdivided();
 		} else {
-			loadSections(this::render);
+			loadSections(() -> {
+				if (height <= heightLimit)
+					render();
+				else
+					probeSubdivided();
+			});
 		}
 	}
 
