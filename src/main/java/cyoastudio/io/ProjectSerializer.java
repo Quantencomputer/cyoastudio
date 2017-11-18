@@ -66,7 +66,7 @@ public class ProjectSerializer {
 	}
 
 	public static void toStream(Project project, OutputStream stream, Gson gson) throws IOException {
-		Writer writer = new OutputStreamWriter(stream);
+		Writer writer = new OutputStreamWriter(stream, Charset.forName("UTF-8"));
 
 		ExportPackage p = new ExportPackage();
 		p.project = project;
@@ -77,7 +77,7 @@ public class ProjectSerializer {
 	}
 
 	public static Project fromBytes(byte[] bytes, Gson gson) throws IOException {
-		InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(bytes));
+		InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(bytes), Charset.forName("UTF-8"));
 		return fromReader(reader, gson);
 	}
 
