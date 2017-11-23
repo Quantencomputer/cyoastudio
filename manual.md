@@ -99,3 +99,11 @@ You can change the look of your document by importing a template using the `Proj
 
 **My exported images are completely or partially blank!**  
 Try increasing the "Render delay" option in the setting window (found in the `Edit` menu). How high you need to go depends on your machine as well as the complexity of the projects you're trying to export.
+
+**My options don't completely fill up the rows!**  
+Try updating Java.
+
+**Something else**  
+If you have a problem not already listed here, or the solutions don't work for you, contact me:
+- [On reddit](https://reddit.com/u/Quantencomputer) (Checked quite often)
+- [On GitHub](https://github.com/Quantencomputer) (checked every now and then)
