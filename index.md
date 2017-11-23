@@ -22,7 +22,7 @@ You need at least [Java 8](https://java.com/en/) to run this program. As long as
 
 There is an `.exe` file available for Windows user, and a `.jar` file for all other operating systems.
 
-There is a short [manual](manual.md) available.
+There is a short [manual](manual.md) available, including a [troubleshooting section](https://quantencomputer.github.io/cyoastudio/manual.html#troubleshooting).
 
 ## Templates
 
