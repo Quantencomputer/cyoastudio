@@ -29,6 +29,14 @@ public class ProjectConverter {
 			this.upperOption = Integer.MAX_VALUE;
 		}
 
+		public Bounds(int section) {
+			super();
+			this.lowerSection = section;
+			this.lowerOption = 0;
+			this.upperSection = section;
+			this.upperOption = Integer.MAX_VALUE;
+		}
+
 		public int lowerSection;
 		public int upperSection;
 		public int lowerOption;
@@ -63,12 +71,12 @@ public class ProjectConverter {
 
 			// Add ids to everything
 			for (int i = 0; i < sections.size(); i++) {
-				dataList.get(i).put("id", "section-" + String.valueOf(i));
+				dataList.get(i).put("id", "section-" + String.valueOf(i + bounds.lowerSection));
 				Section s = sections.get(i);
 				List<Map<String, Object>> optionDataList = (List<Map<String, Object>>) dataList.get(i)
 						.get("options");
 				for (int j = 0; j < optionDataList.size(); j++) {
-					optionDataList.get(j).put("id", "option-" + String.valueOf(i) + "-" + String.valueOf(j));
+					optionDataList.get(j).put("id", "option-" + String.valueOf(i + bounds.lowerSection) + "-" + String.valueOf(j));
 				}
 			}
 			data.put("sections", dataList);

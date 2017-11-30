@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
@@ -187,7 +188,21 @@
           <Tab fx:id="styleTab" text="Style" />
             <Tab fx:id="previewTab" closable="false" text="Preview">
                <content>
-                  <WebView fx:id="preview" prefHeight="200.0" prefWidth="200.0" />
+                  <VBox>
+                     <children>
+                        <HBox spacing="4.0" VBox.vgrow="NEVER">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#partialPreview" text="Update preview" />
+                              <Button mnemonicParsing="false" onAction="#fullPreview" text="Full preview" />
+                              <ProgressBar fx:id="previewProgressBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" progress="0.0" HBox.hgrow="ALWAYS" />
+                           </children>
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                        </HBox>
+                        <WebView fx:id="preview" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
                </content>
             </Tab>
         </tabs>

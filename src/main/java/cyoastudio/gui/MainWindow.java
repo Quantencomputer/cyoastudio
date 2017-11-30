@@ -17,9 +17,10 @@ import cyoastudio.io.*;
 import cyoastudio.io.HtmlImageExporter.OutputFormat;
 import cyoastudio.io.ProjectSerializer.ImageType;
 import cyoastudio.templating.*;
+import cyoastudio.templating.ProjectConverter.Bounds;
 import javafx.beans.value.*;
 import javafx.collections.*;
-import javafx.concurrent.Worker;
+import javafx.concurrent.*;
 import javafx.fxml.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -53,6 +54,8 @@ public class MainWindow extends BorderPane {
 	private Tab styleTab;
 	@FXML
 	private TextField imageHeightField;
+	@FXML
+	private ProgressBar previewProgressBar;
 
 	private Stage stage;
 	private Project project;
@@ -62,6 +65,8 @@ public class MainWindow extends BorderPane {
 	private Option selectedOption;
 	private StyleEditor editor;
 	private String currentElementId = "";
+
+	private Thread backgroundRenderer;
 
 	// TODO remove this hack and make dirty not global
 	public static void touch() {
@@ -208,7 +213,7 @@ public class MainWindow extends BorderPane {
 			@Override
 			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
 				if (newValue == previewTab) {
-					updatePreview();
+					partialPreview();
 				}
 			}
 		});
@@ -244,8 +249,13 @@ public class MainWindow extends BorderPane {
 
 		preview.getEngine().getLoadWorker().stateProperty().addListener((ov, oldState, newState) -> {
 			if (newState == Worker.State.SUCCEEDED && !getCurrentElementId().isEmpty()) {
-				preview.getEngine()
-						.executeScript("document.getElementById('" + getCurrentElementId() + "').scrollIntoView();");
+				try {
+					preview.getEngine()
+							.executeScript(
+									"document.getElementById('" + getCurrentElementId() + "').scrollIntoView();");
+				} catch (Exception e) {
+					logger.error("Error while scrolling to selected preview element", e);
+				}
 			}
 		});
 
@@ -477,7 +487,7 @@ public class MainWindow extends BorderPane {
 
 		contentPane.setCenter(null);
 		updateStyleEditor();
-		updatePreview();
+		fullPreview();
 
 		dirty = false;
 
@@ -703,9 +713,47 @@ public class MainWindow extends BorderPane {
 		touch();
 	}
 
-	private void updatePreview() {
-		String website = project.getTemplate().render(project, ImageType.REFERENCE);
-		preview.getEngine().loadContent(website);
+	@FXML
+	private void partialPreview() {
+		updatePreview(true);
+	}
+
+	private void updatePreview(boolean partial) {
+		Task<String> renderTask = new Task<String>() {
+			@Override
+			protected String call() throws Exception {
+				if (partial && selectedSection != null) {
+					return project.getTemplate().render(project, true,
+							new Bounds(sectionObsList.indexOf(selectedSection)), ImageType.REFERENCE);
+				} else {
+					return project.getTemplate().render(project, ImageType.REFERENCE);
+				}
+			}
+
+			@Override
+			protected void succeeded() {
+				super.succeeded();
+				try {
+					preview.getEngine().loadContent(get());
+					previewProgressBar.setProgress(100);
+				} catch (Exception e) {
+					logger.error("Error while updating preview", e);
+				}
+			}
+		};
+		previewProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+		preview.getEngine().loadContent("");
+
+		if (backgroundRenderer != null) {
+			backgroundRenderer.stop();
+		}
+		backgroundRenderer = new Thread(renderTask);
+		backgroundRenderer.start();
+	}
+
+	@FXML
+	private void fullPreview() {
+		updatePreview(false);
 	}
 
 	private void updateStyleEditor() {
@@ -801,7 +849,7 @@ public class MainWindow extends BorderPane {
 		Template template = new Template(pageSource, styleSource);
 		project.changeTemplate(template, styleSettings);
 		touch();
-		updatePreview();
+		partialPreview();
 		updateStyleEditor();
 	}
 
@@ -825,7 +873,7 @@ public class MainWindow extends BorderPane {
 				Template template = new Template(pageSource, styleSource);
 				project.changeTemplate(template, styleSettings);
 				touch();
-				updatePreview();
+				partialPreview();
 				updateStyleEditor();
 			} catch (Exception e) {
 				showError("Could not load template", e);
@@ -836,7 +884,7 @@ public class MainWindow extends BorderPane {
 	@FXML
 	void defaultTemplate() {
 		project.changeTemplate(Template.defaultTemplate(), Style.defaultStyle());
-		updatePreview();
+		partialPreview();
 		updateStyleEditor();
 		touch();
 	}
