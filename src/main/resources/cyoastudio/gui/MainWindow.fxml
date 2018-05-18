@@ -58,7 +58,8 @@
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="E" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator></MenuItem>
-                        <MenuItem mnemonicParsing="false" onAction="#exportHTML" text="HTML..." />
+                        <MenuItem mnemonicParsing="false" onAction="#exportHTML" text="HTML with included images (slow)..." />
+                        <MenuItem mnemonicParsing="false" onAction="#exportHTMLSeperateImages" text="HTML with external images..." />
                         <MenuItem mnemonicParsing="false" onAction="#exportSplitHTML" text="HTML pages..." />
                         <MenuItem mnemonicParsing="false" onAction="#exportJson" text="JSON..." />
                     </items>

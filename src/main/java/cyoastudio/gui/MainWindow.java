@@ -377,6 +377,35 @@ public class MainWindow extends BorderPane {
 			}
 		}
 	}
+	@FXML
+	void exportHTMLSeperateImages() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(Preferences.getPath("lastDir").toFile());
+		fileChooser.setTitle("Export HTML");
+		fileChooser.getExtensionFilters().addAll(
+				new ExtensionFilter("HTML files", "*.html", ".htm"),
+				new ExtensionFilter("All files", "*"));
+		File selected = fileChooser.showSaveDialog(stage);
+		if (selected != null) {
+			try {
+				Preferences.setPath("lastDir", selected.toPath().getParent());
+				String text = project.getTemplate().render(project, ImageType.SHORT_REFERENCE);
+
+				FileUtils.writeStringToFile(selected, text, Charset.forName("UTF-8"));
+
+				Path imagePath = selected.toPath().getParent().resolve("cyoa_images");
+				if (!Files.exists(imagePath)) {
+					Files.createDirectory(imagePath);
+				}
+				
+				for (Path img : Application.getDatastorage().getFiles()) {
+					Files.copy(img, imagePath.resolve(img.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+				}
+			} catch (Exception e) {
+				showError("Error while exporting", e);
+			}
+		}
+	}
 
 	@FXML
 	void exportSplitHTML() {

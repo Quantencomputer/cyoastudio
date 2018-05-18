@@ -180,10 +180,16 @@ public class ProjectConverter {
 	}
 
 	public static String convert(Image i, ImageType imageType) {
-		if (imageType == ImageType.BASE64)
+		switch (imageType) {
+		case BASE64:
 			return i.toBase64();
-		else
+		case REFERENCE:
 			return i.getURL().toString();
+		case SHORT_REFERENCE:
+			return "cyoa_images/" + i.getPath().getFileName();
+		default:
+			throw new IllegalArgumentException("Invalid imageType passed to image converter.");
+		}
 	}
 
 	public static String convert(Color c) {

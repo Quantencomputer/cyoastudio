@@ -58,7 +58,7 @@ public class Image {
 		return new Image(iden);
 	}
 
-	private Path getPath() {
+	public Path getPath() {
 		return Application.getDatastorage().getFile(identifier);
 	}
 

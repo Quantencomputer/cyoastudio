@@ -44,7 +44,7 @@ public class ProjectSerializer {
 	}
 
 	public enum ImageType {
-		BASE64, REFERENCE
+		BASE64, REFERENCE, SHORT_REFERENCE
 	}
 
 	private static Gson buildGson(ImageType imageType) {
