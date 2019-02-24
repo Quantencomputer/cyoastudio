@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cyoastudio</groupId>
 	<artifactId>cyoastudio</artifactId>
-	<version>0.3.3</version>
+	<version>0.3.4</version>
 	<name>CYOA Studio</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,7 +24,7 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.6.0</version>
 				<configuration>
-					<mainClass>cyoastudio.Application</mainClass>
+					<mainClass>cyoastudio.Main</mainClass>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -42,7 +42,7 @@
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<manifestEntries>
-										<Main-Class>cyoastudio.Application</Main-Class>
+										<Main-Class>cyoastudio.Main</Main-Class>
 									</manifestEntries>
 								</transformer>
 							</transformers>
@@ -67,7 +67,7 @@
 							<jar>${project.build.directory}/${project.artifactId}-${project.version}.jar</jar>
 							<errTitle>CYOA Studio</errTitle>
 							<classPath>
-								<mainClass>cyoastudio.Application</mainClass>
+								<mainClass>cyoastudio.Main</mainClass>
 								<addDependencies>false</addDependencies>
 							</classPath>
 							<jre>
@@ -178,5 +178,95 @@
 			<artifactId>flexmark-ext-gfm-strikethrough</artifactId>
 			<version>0.27.0</version>
 		</dependency>
-	</dependencies>
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-swing</artifactId>
+				<version>11</version>
+				<classifier>win</classifier>
+		</dependency>
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-swing</artifactId>
+				<version>11</version>
+				<classifier>mac</classifier>
+		</dependency>
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-swing</artifactId>
+				<version>11</version>
+				<classifier>linux</classifier>
+		</dependency>
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-web</artifactId>
+				<version>11</version>
+				<classifier>win</classifier>
+		</dependency>
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-web</artifactId>
+				<version>11</version>
+				<classifier>mac</classifier>
+		</dependency>
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-web</artifactId>
+				<version>11</version>
+				<classifier>linux</classifier>
+		</dependency>
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-graphics</artifactId>
+				<version>11</version>
+				<classifier>win</classifier>
+		</dependency>
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-graphics</artifactId>
+				<version>11</version>
+				<classifier>mac</classifier>
+		</dependency>
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-graphics</artifactId>
+				<version>11</version>
+				<classifier>linux</classifier>
+		</dependency>
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-controls</artifactId>
+				<version>11</version>
+				<classifier>win</classifier>
+		</dependency>
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-controls</artifactId>
+				<version>11</version>
+				<classifier>mac</classifier>
+		</dependency>
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-controls</artifactId>
+				<version>11</version>
+				<classifier>linux</classifier>
+		</dependency>	
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-fxml</artifactId>
+				<version>11</version>
+				<classifier>win</classifier>
+		</dependency>	
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-fxml</artifactId>
+				<version>11</version>
+				<classifier>mac</classifier>
+		</dependency>	
+		<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-fxml</artifactId>
+				<version>11</version>
+				<classifier>linux</classifier>
+		</dependency>
+</dependencies>
 </project>
