@@ -9,7 +9,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.release>12</maven.compiler.release>
+		<maven.compiler.release>11</maven.compiler.release>
 	</properties>
 
 	<build>
@@ -18,8 +18,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>11</source>
+					<target>11</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -56,7 +56,7 @@
 			<plugin>
 				<groupId>com.akathist.maven.plugins.launch4j</groupId>
 				<artifactId>launch4j-maven-plugin</artifactId>
-				<version>1.7.21</version>
+				<version>1.7.25</version>
 				<executions>
 					<execution>
 						<id>l4j-clui</id>
@@ -74,7 +74,11 @@
 								<addDependencies>false</addDependencies>
 							</classPath>
 							<jre>
-								<minVersion>1.8.0</minVersion>
+								<minVersion>11.0.0</minVersion>
+								<opts>
+									<opt>--module-path libs</opt>
+									<opt>--add-modules=javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.swing,javafx.web</opt>
+								</opts>
 							</jre>
 						</configuration>
 					</execution>
@@ -160,19 +164,19 @@
 
 		<!-- Logging -->
 		<dependency>
-		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-api</artifactId>
-		    <version>2.12.0</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.12.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-core</artifactId>
-		    <version>2.12.0</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.12.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-slf4j-impl</artifactId>
-		    <version>2.12.0</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>2.12.0</version>
 		</dependency>
 
 		<!-- Flexmark -->
