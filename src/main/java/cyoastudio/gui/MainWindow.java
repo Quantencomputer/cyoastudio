@@ -586,7 +586,7 @@ public class MainWindow extends BorderPane {
 			}
 			ProjectSerializer.writeToZip(project, saveLocation);
 			dirty = false;
-			if (Files.exists(backupLocation)) {
+			if (backupLocation != null && Files.exists(backupLocation)) {
 				Files.delete(backupLocation);
 			}
 		} catch (Exception e) {
