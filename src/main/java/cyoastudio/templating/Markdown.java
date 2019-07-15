@@ -2,14 +2,15 @@ package cyoastudio.templating;
 
 import java.util.Arrays;
 
-import com.vladsch.flexmark.ast.Document;
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.ext.typographic.TypographicExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.superscript.SuperscriptExtension;
-import com.vladsch.flexmark.util.options.*;
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.data.MutableDataHolder;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 
 public class Markdown {
 	private static final MutableDataHolder options = new MutableDataSet()

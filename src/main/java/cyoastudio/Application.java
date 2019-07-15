@@ -61,7 +61,6 @@ public class Application extends javafx.application.Application {
 
 	public static void main(String[] args) {
 		Locale.setDefault(Locale.US);
-		org.apache.log4j.BasicConfigurator.configure();
 
 		try {
 			Properties properties = new Properties();
